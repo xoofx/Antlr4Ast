@@ -2,7 +2,9 @@
 
 <img align="right" width="160px" height="160px" src="img/antlr4ast.png">
 
-Antlr4Ast is a .NET library that provides a parser for ANTLR4/g4 files useful for building code generation tools from such files.
+Antlr4Ast is a .NET library that provides a parser and abstract syntax tree (AST) for [ANTLR4](https://www.antlr.org/)/g4 files. 
+
+> This can be useful if you are looking for building code generation tools from ANTLR4/g4 files.
   
 ## Features
 
