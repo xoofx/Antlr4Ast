@@ -3,58 +3,8 @@
 // See license.txt file in the project root for full license information.
 
 using System.Text;
-using Antlr4.Runtime;
 
 namespace Antlr4Ast;
-
-public enum GrammarKind
-{
-    Full,
-    Lexer,
-    Parser,
-}
-
-public class ImportSyntax : SyntaxNode
-{
-    public ImportSyntax()
-    {
-        Names = new List<ImportNameSyntax>();
-    }
-
-    public List<ImportNameSyntax> Names { get; }
-    
-    public override void ToText(StringBuilder builder)
-    {
-        if (Names.Count <= 0) return;
-        builder.Append("import ");
-        for (var i = 0; i < Names.Count; i++)
-        {
-            var importName = Names[i];
-            if (i > 0) builder.Append(", ");
-            builder.Append(importName);
-        }
-        builder.Append(";");
-        builder.AppendLine();
-    }
-}
-
-public class ImportNameSyntax : SyntaxNode
-{
-    public ImportNameSyntax(string name)
-    {
-        Name = name;
-    }
-
-    public string Name { get; set; }
-
-    public string? Value { get; set; }
-
-    public override void ToText(StringBuilder builder)
-    {
-        builder.Append(Name);
-        if (Value != null) builder.Append(" = ").Append(Name);
-    }
-}
 
 public class GrammarSyntax : SyntaxNode
 {
