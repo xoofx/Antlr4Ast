@@ -2,6 +2,8 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
+using System.Text;
+
 namespace Antlr4Ast;
 
 public static class SyntaxExtensions
@@ -27,4 +29,10 @@ public static class SyntaxExtensions
             GrammarKind.Parser => "parser",
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null)
         };
+    
+    public static void ToLiteral(string literal, StringBuilder builder)
+    {
+        // TODO: escape literal
+        builder.Append('\'').Append(literal).Append('\'');
+    }
 }

@@ -6,21 +6,23 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public sealed class Token : ElementSyntax
+public sealed class LexerCommandSyntax : SyntaxNode
 {
-    public Token(string name)
+    public LexerCommandSyntax(string name)
     {
         Name = name;
     }
 
     public string Name { get; set; }
 
+    public object? Expression { get; set; }
+    
     public override void ToText(StringBuilder builder)
     {
-        if (IsNot) builder.Append("~ ");
-        else if (Label != null) builder.Append(Label).Append('=');
         builder.Append(Name);
-        builder.Append(Suffix.ToText());
-        Options?.ToText(builder);
+        if (Expression != null)
+        {
+            builder.Append('(').Append(Expression).Append(')');
+        }
     }
 }

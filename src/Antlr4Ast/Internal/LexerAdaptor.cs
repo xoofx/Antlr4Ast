@@ -32,7 +32,7 @@ using Antlr4.Runtime.Misc;
 
 namespace Antlr4Ast;
 
-public abstract class LexerAdaptor : Lexer
+internal abstract class LexerAdaptor : Lexer
 {
     private static readonly int PREQUEL_CONSTRUCT = -10;
     private static readonly int OPTIONS_CONSTRUCT = -11;

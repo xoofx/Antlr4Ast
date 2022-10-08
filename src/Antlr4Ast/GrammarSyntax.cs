@@ -15,8 +15,9 @@ public class GrammarSyntax : SyntaxNode
         Imports = new List<ImportSyntax>();
         Tokens = new List<TokensSyntax>();
         Channels = new List<ChannelsSyntax>();
-        ParserRules = new List<ParserRuleSyntax>();
-        LexerRules = new List<LexerRuleSyntax>();
+        ParserRules = new List<RuleSyntax>();
+        LexerRules = new List<RuleSyntax>();
+        LexerModes = new List<LexerModeSyntax>();
     }
 
     public string Name { get; set; }
@@ -31,9 +32,11 @@ public class GrammarSyntax : SyntaxNode
 
     public List<ChannelsSyntax> Channels { get; }
 
-    public List<ParserRuleSyntax> ParserRules { get; }
+    public List<RuleSyntax> ParserRules { get; }
 
-    public List<LexerRuleSyntax> LexerRules { get; }
+    public List<RuleSyntax> LexerRules { get; }
+
+    public List<LexerModeSyntax> LexerModes { get; }
 
     public override void ToText(StringBuilder builder)
     {
@@ -77,6 +80,11 @@ public class GrammarSyntax : SyntaxNode
         {
             lexerRule.ToText(builder);
             builder.AppendLine();
+        }
+
+        foreach (var lexerMode in LexerModes)
+        {
+            lexerMode.ToText(builder);
         }
     }
 }

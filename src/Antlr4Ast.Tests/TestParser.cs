@@ -41,6 +41,27 @@ module
         return Verify(grammar.ToString(), GetVerifySettings());
     }
 
+    [Test]
+    public Task VerifyCSharpLexer()
+    {
+        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpLexer.g4"), @"CSharpLexer.g4");
+        return Verify(grammar.ToString(), GetVerifySettings());
+    }
+
+    [Test]
+    public Task VerifyCSharpParser()
+    {
+        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpParser.g4"), @"CSharpParser.g4");
+        return Verify(grammar.ToString(), GetVerifySettings());
+    }
+
+    [Test]
+    public Task VerifyCSharpPreprocessorParser()
+    {
+        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpPreprocessorParser.g4"), @"CSharpPreprocessorParser.g4");
+        return Verify(grammar.ToString(), GetVerifySettings());
+    }
+
     private VerifySettings GetVerifySettings()
     {
         var settings = new VerifySettings();

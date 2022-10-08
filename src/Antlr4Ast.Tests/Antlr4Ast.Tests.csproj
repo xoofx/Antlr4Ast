@@ -9,6 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Grammars\CSharpLexer.g4" />
+    <None Remove="Grammars\CSharpParser.g4" />
+    <None Remove="Grammars\CSharpPreprocessorParser.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\Shared\ANTLRv4Lexer.g4" Link="ANTLRv4Lexer.g4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -16,6 +22,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\Shared\LexBasic.g4" Link="LexBasic.g4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Grammars\CSharpLexer.g4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Grammars\CSharpParser.g4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Grammars\CSharpPreprocessorParser.g4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -6,14 +6,27 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public sealed class BlockSyntax : AlternativeListSyntax
+public sealed class LexerBlockSyntax : ElementSyntax
 {
+    public LexerBlockSyntax()
+    {
+        Items = new List<ElementSyntax>();
+    }
+
+    public List<ElementSyntax> Items { get; }
+
+
     public override void ToText(StringBuilder builder)
     {
         if (IsNot) builder.Append("~ ");
-        else if (Label != null) builder.Append(Label).Append('=');
         builder.Append("( ");
-        base.ToText(builder);
+        for (var i = 0; i < Items.Count; i++)
+        {
+            var item = Items[i];
+            if (i > 0) builder.Append(" | ");
+            item.ToText(builder);
+        }
+
         builder.Append(" )");
         builder.Append(Suffix.ToText());
     }

@@ -6,14 +6,19 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class LexerRuleSyntax : RuleSyntax
+public sealed class LexerChar : ElementSyntax
 {
-    public LexerRuleSyntax(string name) : base(name)
+    public LexerChar(string value)
     {
+        Value = value;
     }
+
+    public string Value { get; set; }
 
     public override void ToText(StringBuilder builder)
     {
-        throw new NotImplementedException();
+        if (IsNot) builder.Append("~ ");
+        builder.Append(Value);
+        builder.Append(Suffix.ToText());
     }
 }

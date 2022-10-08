@@ -6,20 +6,11 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public sealed class LiteralSyntax : ElementSyntax
+public sealed class DotSyntax : ElementSyntax
 {
-    public LiteralSyntax(string text)
-    {
-        Text = text;
-    }
-
-    public string Text { get; set; }
-
     public override void ToText(StringBuilder builder)
     {
-        if (IsNot) builder.Append("~ ");
-        builder.Append(Text);
-        builder.Append(Suffix.ToText());
+        builder.Append('.');
         Options?.ToText(builder);
     }
 }

@@ -3,6 +3,7 @@
 // See license.txt file in the project root for full license information.
 
 using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 
 namespace Antlr4Ast;
 
@@ -53,30 +54,145 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             }
         }
 
-        // Parse Rules
-        VisitRules(context.rules());
+        // Parse parser and lexer rules
+        foreach (var ruleSpec in context.rules().ruleSpec())
+        {
+            var ruleSyntax = (RuleSyntax)VisitRuleSpec(ruleSpec)!;
+            if (ruleSyntax.IsLexer)
+            {
+                _grammar.LexerRules.Add(ruleSyntax);
+            }
+            else
+            {
+                _grammar.ParserRules.Add(ruleSyntax);
+            }
+        }
+
+        foreach (var mode in context.modeSpec())
+        {
+            _grammar.LexerModes.Add((LexerModeSyntax)VisitModeSpec(mode)!);
+        }
 
         return null;
+    }
+
+    public override SyntaxNode? VisitLexerRuleSpec(ANTLRv4Parser.LexerRuleSpecContext context)
+    {
+        var ruleName = context.TOKEN_REF().GetText();
+
+        var alternativeList = (AlternativeListSyntax)VisitLexerRuleBlock(context.lexerRuleBlock())!;
+
+        var lexerRule = SpanAndComment(context, new RuleSyntax(ruleName, alternativeList)
+        {
+            IsFragment = context.FRAGMENT() != null
+        });
+
+        if (context.optionsSpec() != null)
+        {
+            lexerRule.Options = VisitOptionsSpec(context.optionsSpec()) as OptionsSyntax;
+        }
+
+        return lexerRule;
     }
 
     public override SyntaxNode? VisitParserRuleSpec(ANTLRv4Parser.ParserRuleSpecContext context)
     {
         var ruleName = context.RULE_REF().GetText();
 
-        var node = base.VisitRuleBlock(context.ruleBlock());
+        var node = (AlternativeListSyntax)VisitRuleBlock(context.ruleBlock())!;
+        var parserRule = SpanAndComment(context, new RuleSyntax(ruleName, node));
+        return parserRule;
+    }
 
-        if (node is AlternativeListSyntax ruleNode)
+    public override SyntaxNode? VisitLexerAltList(ANTLRv4Parser.LexerAltListContext context)
+    {
+        var alternativeList = new AlternativeListSyntax();
+        foreach (var lexerAlt in context.lexerAlt())
         {
-            var parserRule = SpanAndComment(context, new ParserRuleSyntax(ruleName, ruleNode));
-            _grammar.ParserRules.Add(parserRule);
+            if (VisitLexerAlt(lexerAlt) is AlternativeSyntax node)
+            {
+                alternativeList.Items.Add(node);
+            }
         }
 
-        return null;
+        return SpanAndComment(context, alternativeList);
+    }
+
+    public override SyntaxNode? VisitLexerAlt(ANTLRv4Parser.LexerAltContext context)
+    {
+        var alternative = new AlternativeSyntax();
+        var elements = context.lexerElements().lexerElement();
+        foreach (var element in elements)
+        {
+            if (VisitLexerElement(element) is ElementSyntax node)
+            {
+                alternative.Elements.Add(node);
+            }
+        }
+
+        if (context.lexerElements().lexerElement().Length == 0)
+        {
+            alternative.Elements.Add(SpanAndComment(context.lexerElements(), new EmptySyntax()));
+        }
+
+        if (context.lexerCommands() is { } commands)
+        {
+            alternative.LexerCommands = (LexerCommandsSyntax)VisitLexerCommands(commands)!;
+        }
+
+        return SpanAndComment(context, alternative);
+    }
+
+    public override SyntaxNode? VisitLexerCommands(ANTLRv4Parser.LexerCommandsContext context)
+    {
+        var commands = new LexerCommandsSyntax();
+        foreach (var lexerCommand in context.lexerCommand())
+        {
+            if (VisitLexerCommand(lexerCommand) is LexerCommandSyntax lexerCommandSyntax)
+            {
+                commands.Items.Add(lexerCommandSyntax);
+            }
+        }
+
+        return SpanAndComment(context, commands);
+    }
+
+    public override SyntaxNode? VisitLexerCommand(ANTLRv4Parser.LexerCommandContext context)
+    {
+        string name;
+        if (context.lexerCommandName().identifier() is { } identifier)
+        {
+            name = GetIdentifier(identifier);
+        }
+        else
+        {
+            name = context.lexerCommandName().MODE().GetText();
+        }
+
+        var lexerCommand = new LexerCommandSyntax(name);
+        if (context.lexerCommandExpr() is { } commandExpr)
+        {
+            if (commandExpr.identifier() is { } identifierExpr)
+            {
+                lexerCommand.Expression = GetIdentifier(identifierExpr);
+            }
+            else if (commandExpr.INT() is { } intExpr)
+            {
+                lexerCommand.Expression = int.Parse(intExpr.GetText());
+            }
+        }
+
+        return SpanAndComment(context, lexerCommand);
     }
 
     public override SyntaxNode? VisitAlternative(ANTLRv4Parser.AlternativeContext context)
     {
         var alternative = new AlternativeSyntax();
+        if (context.elementOptions() is { } elementOptions)
+        {
+            alternative.Options = (ElementOptionsSyntax)VisitElementOptions(elementOptions)!;
+        }
+
         var elements = context.element();
         foreach (var element in elements)
         {
@@ -86,6 +202,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             }
         }
 
+        if (elements.Length == 0)
+        {
+            alternative.Elements.Add(SpanAndComment(context, new EmptySyntax()));
+        }
+        
         return SpanAndComment(context, alternative);
     }
 
@@ -110,7 +231,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         {
             if (context.identifier() is { } identifier)
             {
-                node.Label = GetIdentifier(identifier);
+                node.ParserLabel = GetIdentifier(identifier);
             }
 
             return node;
@@ -155,9 +276,32 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         {
             return SpanAndComment(ruleRef, new RuleRefSyntax(ruleRef.RULE_REF().GetText()));
         }
+        else if (atom.notSet() is { } notSet)
+        {
+            return VisitNotSet(notSet);
+        }
+        else if (atom.DOT() != null)
+        {
+            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+            return SpanAndComment(atom, new DotSyntax() { Options = elementOptions });
+        }
 
         // Not supported
         return null;
+    }
+
+    public override SyntaxNode? VisitModeSpec(ANTLRv4Parser.ModeSpecContext context)
+    {
+        var modeSpec = new LexerModeSyntax(GetIdentifier(context.identifier()));
+        foreach (var lexerRuleSpec in context.lexerRuleSpec())
+        {
+            if (VisitLexerRuleSpec(lexerRuleSpec) is RuleSyntax rule)
+            {
+                modeSpec.LexerRules.Add(rule);
+            }
+        }
+
+        return SpanAndComment(context, modeSpec);
     }
 
     public override SyntaxNode? VisitBlock(ANTLRv4Parser.BlockContext context)
@@ -173,6 +317,206 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         return SpanAndComment(context, block);
     }
 
+
+    public override SyntaxNode? VisitLexerElement(ANTLRv4Parser.LexerElementContext context)
+    {
+        ElementSyntax? node;
+
+        if (context.labeledLexerElement() is { } labeledElement)
+        {
+            var identifier = labeledElement.identifier();
+            node = (ElementSyntax)(labeledElement.lexerAtom() is { } atom ? VisitLexerAtom(atom)! : VisitLexerBlock(labeledElement.lexerBlock())!);
+            node.Label = GetIdentifier(identifier);
+            node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
+            // TODO: label kind
+        }
+        else if (context.lexerBlock() is { } lexerBlock)
+        {
+            node = (ElementSyntax)VisitLexerBlock(lexerBlock)!;
+        }
+        else if (context.lexerAtom() is { } atom)
+        {
+            node = (ElementSyntax)VisitLexerAtom(atom)!;
+        }
+        else
+        {
+            // We don't handle action block
+            node = null;
+        }
+
+        if (node is not null && context.ebnfSuffix() != null)
+        {
+            ApplySuffix(context.ebnfSuffix(), node!);
+        }
+
+        return node;
+    }
+
+    public override SyntaxNode? VisitLexerBlock(ANTLRv4Parser.LexerBlockContext context)
+    {
+        var blockSyntax = new BlockSyntax();
+        foreach (var lexerAlt in context.lexerAltList().lexerAlt())
+        {
+            if (VisitLexerAlt(lexerAlt) is AlternativeSyntax alt)
+            {
+                blockSyntax.Items.Add(alt);
+            }
+        }
+
+        return SpanAndComment(context, blockSyntax);
+    }
+
+    public override SyntaxNode? VisitElementOptions(ANTLRv4Parser.ElementOptionsContext context)
+    {
+        //elementOptions
+        //    : LT elementOption(COMMA elementOption)*GT
+        //    ;
+        var elementOptions = new ElementOptionsSyntax();
+        foreach (var elementOptionContext in context.elementOption())
+        {
+            elementOptions.Items.Add((ElementOptionSyntax)VisitElementOption(elementOptionContext)!);
+        }
+
+        return SpanAndComment(context, elementOptions);
+    }
+
+    public override SyntaxNode? VisitElementOption(ANTLRv4Parser.ElementOptionContext context)
+    {
+        //elementOption
+        //    : identifier
+        //    | identifier ASSIGN(identifier | STRING_LITERAL)
+        //    ;
+        var elementOption = new ElementOptionSyntax(GetIdentifier(context.identifier()[0]))
+        {
+            Value = context.identifier().Length == 2 ? GetIdentifier(context.identifier()[1]) : context.STRING_LITERAL().GetText()
+        };
+        return SpanAndComment(context, elementOption);
+    }
+
+    public override SyntaxNode? VisitLexerAtom(ANTLRv4Parser.LexerAtomContext atom)
+    {
+        if (atom.terminal() is { } terminal)
+        {
+            return VisitTerminal(terminal);
+        }
+
+        if (atom.characterRange() is { } characterRange)
+        {
+            return VisitCharacterRange(characterRange);
+        }
+
+        if (atom.DOT() != null)
+        {
+            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+            return SpanAndComment(atom, new DotSyntax() { Options = elementOptions });
+        }
+
+        if (atom.notSet() is { } notSet)
+        {
+            return VisitNotSet(notSet);
+        }
+
+        var lexerCharSet = atom.LEXER_CHAR_SET();
+        return VisitLexerCharSet(atom, lexerCharSet);
+    }
+
+    private LexerChar VisitLexerCharSet(ParserRuleContext context, ITerminalNode node)
+    {
+        return SpanAndComment(context, new LexerChar(node.GetText()));
+    }
+    
+    public override SyntaxNode? VisitNotSet(ANTLRv4Parser.NotSetContext context)
+    {
+        if (context.blockSet() is { } blockSet)
+        {
+            var element = (ElementSyntax)VisitBlockSet(blockSet)!;
+            element.IsNot = true;
+            return element;
+        }
+
+        if (context.setElement() is { } setElement)
+        {
+            var element = (ElementSyntax)VisitSetElement(setElement)!;
+            element.IsNot = true;
+            return element;
+        }
+
+        return null;
+    }
+
+    public override SyntaxNode? VisitBlockSet(ANTLRv4Parser.BlockSetContext context)
+    {
+        //blockSet
+        //    : LPAREN setElement(OR setElement)*RPAREN
+        //    ;
+        var blockSyntax = new LexerBlockSyntax();
+        foreach (var setElement in context.setElement())
+        {
+            if (VisitSetElement(setElement) is ElementSyntax elementSyntax)
+            {
+                blockSyntax.Items.Add(elementSyntax);
+            }
+        }
+
+        return SpanAndComment(context, blockSyntax);
+    }
+
+    public override SyntaxNode? VisitSetElement(ANTLRv4Parser.SetElementContext context)
+    {
+        //setElement
+        //   : TOKEN_REF elementOptions?
+        //   | STRING_LITERAL elementOptions?
+        //   | characterRange
+        //   | LEXER_CHAR_SET
+        //   ;
+        var elementOptions = context.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+        if (context.TOKEN_REF() is { } tokenRef)
+        {
+            return SpanAndComment(context, new Token(tokenRef.GetText()) { Options = elementOptions });
+
+        }
+        else if (context.STRING_LITERAL() is { } stringLiteral)
+        {
+            return SpanAndComment(context, new LiteralSyntax(stringLiteral.GetText()) { Options = elementOptions });
+        }
+        else if (context.characterRange() is { } characterRange)
+        {
+            return VisitCharacterRange(characterRange);
+
+        }
+        else if (context.LEXER_CHAR_SET() is {} lexerCharSet)
+        {
+            return VisitLexerCharSet(context, lexerCharSet);
+        }
+
+        return base.VisitSetElement(context);
+    }
+
+    public override SyntaxNode? VisitCharacterRange(ANTLRv4Parser.CharacterRangeContext context)
+    {
+        //characterRange
+        //   : STRING_LITERAL RANGE STRING_LITERAL
+        //   ;
+        var from = context.STRING_LITERAL()[0].GetText();
+        var to = context.STRING_LITERAL()[1].GetText();
+        return SpanAndComment(context, new CharacterRange(from, to));
+    }
+
+    public override SyntaxNode? VisitTerminal(ANTLRv4Parser.TerminalContext terminal)
+    {
+        //terminal
+        //   : TOKEN_REF elementOptions?
+        //   | STRING_LITERAL elementOptions?
+        //   ;
+        var elementOptions = terminal.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+
+        if (terminal.TOKEN_REF() is { } tokenRef)
+        {
+            return SpanAndComment(terminal, new Token(tokenRef.GetText()) { Options = elementOptions });
+        }
+        return SpanAndComment(terminal, new LiteralSyntax(terminal.STRING_LITERAL().GetText()) { Options = elementOptions });
+    }
+
     public override SyntaxNode? VisitElement(ANTLRv4Parser.ElementContext context)
     {
         //element
@@ -185,12 +529,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         if (context.labeledElement() is { } labeledElement)
         {
             var identifier = labeledElement.identifier();
-            var node = labeledElement.atom() is { } atom ? VisitAtom(atom) : VisitBlock(labeledElement.block());
-            if (node is ElementSyntax ruleNode)
-            {
-                ruleNode.Label = GetIdentifier(identifier);
-            }
-
+            var node = labeledElement.atom() is { } atom ? (ElementSyntax)VisitAtom(atom)! : (ElementSyntax)VisitBlock(labeledElement.block())!;
+            node.Label = GetIdentifier(identifier);
+            node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
             return node;
         }
         else if (context.ebnf() is { } ebnf && VisitBlock(ebnf.block()) is BlockSyntax blockSyntax)
@@ -210,6 +551,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             }
             return atomSyntax;
         }
+
 
         return base.VisitElement(context);
     }
@@ -232,6 +574,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //option
         //   : identifier ASSIGN optionValue
         var name = GetIdentifier(option.identifier());
+
         object? value = null;
         //optionValue
         //   : identifier(DOT identifier)*
@@ -263,6 +606,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitDelegateGrammars(ANTLRv4Parser.DelegateGrammarsContext context)
     {
+        //delegateGrammars
+        //   : IMPORT delegateGrammar (COMMA delegateGrammar)* SEMI
+        //   ;
         var importSyntax = SpanAndComment(context, new ImportSyntax());
 
         foreach(var delegateGrammar in context.delegateGrammar())
@@ -281,6 +627,12 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitTokensSpec(ANTLRv4Parser.TokensSpecContext context)
     {
+        //tokensSpec
+        //   : TOKENS idList? RBRACE
+        //   ;
+        //idList
+        //   : identifier (COMMA identifier)* COMMA?
+        //   ;
         var tokens = SpanAndComment(context, new TokensSyntax());
 
         foreach (var id in context.idList().identifier())
@@ -293,6 +645,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitChannelsSpec(ANTLRv4Parser.ChannelsSpecContext context)
     {
+        //channelsSpec
+        //   : CHANNELS idList? RBRACE
+        //   ;
         var tokens = SpanAndComment(context, new ChannelsSyntax());
 
         foreach (var id in context.idList().identifier())
