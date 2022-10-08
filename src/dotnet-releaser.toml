@@ -1,0 +1,5 @@
+[msbuild]
+project = "Antlr4Ast.sln"
+[github]
+user = "xoofx"
+repo = "Antlr4Ast"

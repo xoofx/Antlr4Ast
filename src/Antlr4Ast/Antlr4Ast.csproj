@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.11.1" />
+  </ItemGroup>
+  <!--
+  <ItemGroup>
+    <PackageReference Include="Antlr4BuildTasks" Version="11.5.0" />
+    <Antlr4 Include="ANTLRv4Lexer.g4">
+      <Package>Antlr4Ast</Package>
+    </Antlr4>
+    <Antlr4 Include="ANTLRv4Parser.g4">
+      <Package>Antlr4Ast</Package>
+      <Visitor>true</Visitor>
+    </Antlr4>
+  </ItemGroup>
+  -->
+</Project>
