@@ -44,6 +44,12 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
                 case ImportSyntax importSyntax:
                     _grammar.Imports.Add(importSyntax);
                     break;
+                case ChannelsSyntax channelsSyntax:
+                    _grammar.Channels.Add(channelsSyntax);
+                    break;
+                case TokensSyntax tokensSyntax:
+                    _grammar.Tokens.Add(tokensSyntax);
+                    break;
             }
         }
 
