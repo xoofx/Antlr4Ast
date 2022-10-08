@@ -246,19 +246,19 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         return identifier.TOKEN_REF()?.GetText() ?? identifier.RULE_REF().GetText();
     }
 
-    public override SyntaxNode? VisitAltList(ANTLRv4Parser.AltListContext context)
-    {
-        var list = new AlternativeListSyntax();
-        foreach (var alternative in context.alternative())
-        {
-            if (VisitAlternative(alternative) is AlternativeSyntax node)
-            {
-                list.Items.Add(node);
-            }
-        }
+    //public override SyntaxNode? VisitAltList(ANTLRv4Parser.AltListContext context)
+    //{
+    //    var list = new AlternativeListSyntax();
+    //    foreach (var alternative in context.alternative())
+    //    {
+    //        if (VisitAlternative(alternative) is AlternativeSyntax node)
+    //        {
+    //            list.Items.Add(node);
+    //        }
+    //    }
 
-        return SpanAndComment(context, list);
-    }
+    //    return SpanAndComment(context, list);
+    //}
 
     public override SyntaxNode? VisitAtom(ANTLRv4Parser.AtomContext atom)
     {
