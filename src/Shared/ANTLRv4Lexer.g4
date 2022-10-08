@@ -43,8 +43,6 @@ lexer grammar ANTLRv4Lexer;
 
 options { superClass = LexerAdaptor; }
 
-@modifier{internal}
-
 import LexBasic;
 
 // Standard set of fragments
