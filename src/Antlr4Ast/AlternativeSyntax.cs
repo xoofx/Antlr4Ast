@@ -21,19 +21,19 @@ public sealed class AlternativeSyntax : SyntaxNode
 
     public LexerCommandsSyntax? LexerCommands { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (Options is not null)
         {
-            Options.ToText(builder);
+            Options.ToText(builder, options);
             builder.Append(' ');
         }
 
         for (var i = 0; i < Elements.Count; i++)
         {
             var elementSyntax = Elements[i];
-            if (i > 0) builder.Append(" ");
-            builder.Append(elementSyntax);
+            if (i > 0) builder.Append(' ');
+            elementSyntax.ToText(builder, options);
         }
 
         if (ParserLabel is not null)
@@ -43,7 +43,7 @@ public sealed class AlternativeSyntax : SyntaxNode
         }
         else if (LexerCommands is not null)
         {
-            LexerCommands.ToText(builder);
+            LexerCommands.ToText(builder, options);
         }
     }
 }

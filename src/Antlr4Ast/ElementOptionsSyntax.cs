@@ -14,7 +14,7 @@ public sealed class ElementOptionsSyntax : SyntaxNode
     }
     public List<ElementOptionSyntax> Items { get; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (Items.Count == 0) return;
         builder.Append('<');
@@ -22,7 +22,7 @@ public sealed class ElementOptionsSyntax : SyntaxNode
         {
             var elementOptionSyntax = Items[i];
             if (i > 0) builder.Append(", ");
-            elementOptionSyntax.ToText(builder);
+            elementOptionSyntax.ToText(builder, options);
         }
         builder.Append('>');
     }

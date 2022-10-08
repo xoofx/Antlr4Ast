@@ -23,13 +23,42 @@ public abstract class SyntaxNode
     public TextSpan Span { get; set; }
 
 
-    public abstract void ToText(StringBuilder builder);
+    public void ToText(StringBuilder builder, FormattingOptions options)
+    {
+        if (options.DisplayComment)
+        {
+            foreach (var comment in CommentsBefore)
+            {
+                builder.AppendLine(comment.Text);
+            }
+        }
 
+        ToTextImpl(builder, options);
+
+        if (options.DisplayComment)
+        {
+            foreach (var comment in CommentsAfter)
+            {
+                builder.Append(' ').AppendLine(comment.Text);
+            }
+        }
+    }
+
+    protected abstract void ToTextImpl(StringBuilder builder, FormattingOptions options);
 
     public sealed override string ToString()
     {
+        return ToString(new FormattingOptions()
+        {
+            ShouldDisplayRulesAsMultiLine = false,
+            DisplayComment = false
+        });
+    }
+
+    public string ToString(FormattingOptions options)
+    {
         var builder = new StringBuilder();
-        ToText(builder);
+        ToText(builder, options);
         return builder.ToString();
     }
 }

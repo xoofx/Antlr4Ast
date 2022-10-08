@@ -13,5 +13,11 @@ public class CommentSyntax
     }
 
     public string Text { get; set; }
+
     public CommentKind Kind { get; set; }
+
+    public override string ToString()
+    {
+        return Text;
+    }
 }

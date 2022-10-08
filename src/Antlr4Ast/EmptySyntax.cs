@@ -8,7 +8,7 @@ namespace Antlr4Ast;
 
 public sealed class EmptySyntax : ElementSyntax
 {
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
     }
 }

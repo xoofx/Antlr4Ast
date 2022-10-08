@@ -16,7 +16,7 @@ public sealed class LexerBlockSyntax : ElementSyntax
     public List<ElementSyntax> Items { get; }
 
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
         builder.Append("( ");
@@ -24,7 +24,7 @@ public sealed class LexerBlockSyntax : ElementSyntax
         {
             var item = Items[i];
             if (i > 0) builder.Append(" | ");
-            item.ToText(builder);
+            item.ToText(builder, options);
         }
 
         builder.Append(" )");

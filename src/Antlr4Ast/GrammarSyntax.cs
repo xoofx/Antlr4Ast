@@ -38,7 +38,7 @@ public class GrammarSyntax : SyntaxNode
 
     public List<LexerModeSyntax> LexerModes { get; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (Kind != GrammarKind.Full)
         {
@@ -46,45 +46,74 @@ public class GrammarSyntax : SyntaxNode
         }
         builder.AppendLine($"grammar {Name};");
 
+        if (options.ShouldDisplayRulesAsMultiLine)
+        {
+            builder.AppendLine();
+        }
+
         foreach (var option in Options)
         {
-            option.ToText(builder);
+            option.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
 
         foreach (var import in Imports)
         {
-            import.ToText(builder);
+            import.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
 
         foreach (var token in Tokens)
         {
-            token.ToText(builder);
+            token.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
 
         foreach (var channel in Channels)
         {
-            channel.ToText(builder);
+            channel.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
         
         foreach (var parserRule in ParserRules)
         {
-            parserRule.ToText(builder);
+            parserRule.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
-        
+
         foreach (var lexerRule in LexerRules)
         {
-            lexerRule.ToText(builder);
+            lexerRule.ToText(builder, options);
             builder.AppendLine();
+            if (options.ShouldDisplayRulesAsMultiLine)
+            {
+                builder.AppendLine();
+            }
         }
 
         foreach (var lexerMode in LexerModes)
         {
-            lexerMode.ToText(builder);
+            lexerMode.ToText(builder, options);
         }
     }
 }

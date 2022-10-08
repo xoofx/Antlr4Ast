@@ -15,11 +15,11 @@ public sealed class LiteralSyntax : ElementSyntax
 
     public string Text { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
         builder.Append(Text);
         builder.Append(Suffix.ToText());
-        Options?.ToText(builder);
+        Options?.ToText(builder, options);
     }
 }

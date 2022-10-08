@@ -15,7 +15,7 @@ public sealed class LexerCommandsSyntax : SyntaxNode
 
     public List<LexerCommandSyntax> Items { get; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (Items.Count == 0) return;
         builder.Append(" -> ");
@@ -23,7 +23,7 @@ public sealed class LexerCommandsSyntax : SyntaxNode
         {
             var lexerCommand = Items[i];
             if (i > 0) builder.Append(", ");
-            lexerCommand.ToText(builder);
+            lexerCommand.ToText(builder, options);
         }
     }
 }

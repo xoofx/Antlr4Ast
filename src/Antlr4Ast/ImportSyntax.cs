@@ -15,14 +15,14 @@ public class ImportSyntax : SyntaxNode
 
     public List<ImportNameSyntax> Names { get; }
     
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append("import ");
         for (var i = 0; i < Names.Count; i++)
         {
             var importName = Names[i];
             if (i > 0) builder.Append(", ");
-            builder.Append(importName);
+            importName.ToText(builder, options);
         }
         builder.Append(';');
     }

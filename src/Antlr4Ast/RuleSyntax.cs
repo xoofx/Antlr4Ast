@@ -24,15 +24,25 @@ public sealed class RuleSyntax : SyntaxNode
 
     public OptionsSyntax? Options { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsFragment)
         {
             builder.Append("fragment ");
         }
         builder.Append(Name);
+        if (options.ShouldDisplayRulesAsMultiLine)
+        {
+            builder.AppendLine().Append("  ");
+        }
         builder.Append(": ");
-        builder.Append(AlternativeList);
+
+        AlternativeList.ToText(builder, options);
+
+        if (options.ShouldDisplayRulesAsMultiLine)
+        {
+            builder.AppendLine().Append("  ");
+        }
         builder.Append(';');
     }
 }

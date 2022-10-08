@@ -17,7 +17,7 @@ public class ImportNameSyntax : SyntaxNode
 
     public string? Value { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append(Name);
         if (Value != null) builder.Append(" = ").Append(Name);

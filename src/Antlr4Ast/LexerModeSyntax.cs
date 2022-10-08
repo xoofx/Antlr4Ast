@@ -18,12 +18,12 @@ public sealed class LexerModeSyntax : SyntaxNode
 
     public List<RuleSyntax> LexerRules { get;  }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append("mode ").Append(Name).Append(';').AppendLine();
         foreach (var lexerRule in LexerRules)
         {
-            lexerRule.ToText(builder);
+            lexerRule.ToText(builder, options);
             builder.AppendLine();
         }
     }

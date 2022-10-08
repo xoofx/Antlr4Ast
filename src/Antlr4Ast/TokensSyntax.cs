@@ -15,7 +15,7 @@ public class TokensSyntax : SyntaxNode
 
     public List<string> Ids { get; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append("tokens { ");
         for (var i = 0; i < Ids.Count; i++)

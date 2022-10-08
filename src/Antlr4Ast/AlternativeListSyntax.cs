@@ -15,13 +15,20 @@ public class AlternativeListSyntax : ElementSyntax
     
     public List<AlternativeSyntax> Items { get; }
     
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         for (var i = 0; i < Items.Count; i++)
         {
             var item = Items[i];
-            if (i > 0) builder.Append(" | ");
-            builder.Append(item);
+            if (i > 0)
+            {
+                if (options.ShouldDisplayRulesAsMultiLine && this.GetType() == typeof(AlternativeListSyntax))
+                {
+                    builder.AppendLine().Append(' ');
+                }
+                builder.Append(" | ");
+            }
+            item.ToText(builder, options);
         }
     }
 }

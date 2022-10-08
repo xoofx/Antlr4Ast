@@ -15,14 +15,14 @@ public class ChannelsSyntax : SyntaxNode
 
     public List<string> Ids { get; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append("channels { ");
         for (var i = 0; i < Ids.Count; i++)
         {
-            var option = Ids[i];
+            var id = Ids[i];
             if (i > 0) builder.Append(", ");
-            builder.Append(option);
+            builder.Append(id);
         }
 
         builder.Append(" }");

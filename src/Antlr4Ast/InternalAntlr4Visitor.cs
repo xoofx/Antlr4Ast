@@ -11,11 +11,13 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 {
     private readonly CommonTokenStream _tokens;
     private readonly GrammarSyntax _grammar;
+    private readonly HashSet<int> _tokenIndicesUsed;
 
     public InternalAntlr4Visitor(CommonTokenStream tokens, GrammarSyntax grammarSyntax)
     {
         _tokens = tokens;
         _grammar = grammarSyntax;
+        _tokenIndicesUsed = new HashSet<int>();
     }
 
     public override SyntaxNode? VisitGrammarSpec(ANTLRv4Parser.GrammarSpecContext context)
@@ -82,17 +84,17 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
         var alternativeList = (AlternativeListSyntax)VisitLexerRuleBlock(context.lexerRuleBlock())!;
 
-        var lexerRule = SpanAndComment(context, new RuleSyntax(ruleName, alternativeList)
+        var lexerRule = new RuleSyntax(ruleName, alternativeList)
         {
             IsFragment = context.FRAGMENT() != null
-        });
+        };
 
         if (context.optionsSpec() != null)
         {
             lexerRule.Options = VisitOptionsSpec(context.optionsSpec()) as OptionsSyntax;
         }
 
-        return lexerRule;
+        return SpanAndComment(context, lexerRule, false);
     }
 
     public override SyntaxNode? VisitParserRuleSpec(ANTLRv4Parser.ParserRuleSpecContext context)
@@ -100,8 +102,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         var ruleName = context.RULE_REF().GetText();
 
         var node = (AlternativeListSyntax)VisitRuleBlock(context.ruleBlock())!;
-        var parserRule = SpanAndComment(context, new RuleSyntax(ruleName, node));
-        return parserRule;
+        return SpanAndComment(context, new RuleSyntax(ruleName, node), false);
     }
 
     public override SyntaxNode? VisitLexerAltList(ANTLRv4Parser.LexerAltListContext context)
@@ -317,9 +318,14 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         return SpanAndComment(context, block);
     }
 
-
     public override SyntaxNode? VisitLexerElement(ANTLRv4Parser.LexerElementContext context)
     {
+        //lexerElement
+        //    : labeledLexerElement ebnfSuffix?
+        //    | lexerAtom ebnfSuffix ?
+        //    | lexerBlock ebnfSuffix ?
+        //    | actionBlock QUESTION ?
+        //    ;
         ElementSyntax? node;
 
         if (context.labeledLexerElement() is { } labeledElement)
@@ -328,7 +334,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             node = (ElementSyntax)(labeledElement.lexerAtom() is { } atom ? VisitLexerAtom(atom)! : VisitLexerBlock(labeledElement.lexerBlock())!);
             node.Label = GetIdentifier(identifier);
             node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
-            // TODO: label kind
+
+            if (context.ebnfSuffix() is { } suffix)
+            {
+                ApplySuffix(suffix, node);
+            }
         }
         else if (context.lexerBlock() is { } lexerBlock)
         {
@@ -532,6 +542,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             var node = labeledElement.atom() is { } atom ? (ElementSyntax)VisitAtom(atom)! : (ElementSyntax)VisitBlock(labeledElement.block())!;
             node.Label = GetIdentifier(identifier);
             node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
+
+            if (context.ebnfSuffix() is { } suffix)
+            {
+                ApplySuffix(suffix, node);
+            }
             return node;
         }
         else if (context.ebnf() is { } ebnf && VisitBlock(ebnf.block()) is BlockSyntax blockSyntax)
@@ -675,11 +690,14 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         };
     }
 
-    private T SpanAndComment<T>(ParserRuleContext context, T node) where T : SyntaxNode
+    private T SpanAndComment<T>(ParserRuleContext context, T node, bool collectAfter = true) where T : SyntaxNode
     {
         node.Span = CreateSpan(context);
         AddTokens(_tokens.GetHiddenTokensToLeft(context.Start.TokenIndex), node.CommentsBefore);
-        AddTokens(_tokens.GetHiddenTokensToRight(context.Stop.TokenIndex), node.CommentsAfter);
+        if (collectAfter)
+        {
+            AddTokens(_tokens.GetHiddenTokensToRight(context.Stop.TokenIndex), node.CommentsAfter);
+        }
 
         void AddTokens(IList<IToken>? tokens, List<CommentSyntax> comments)
         {
@@ -687,17 +705,22 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
             foreach (var token in tokens)
             {
+                if (_tokenIndicesUsed.Contains(token.TokenIndex)) continue;
+
                 if (token.Type == ANTLRv4Lexer.DOC_COMMENT)
                 {
                     comments.Add(new CommentSyntax(token.Text, CommentKind.Doc));
+                    _tokenIndicesUsed.Add(token.TokenIndex);
                 }
                 else if (token.Type == ANTLRv4Lexer.LINE_COMMENT)
                 {
                     comments.Add(new CommentSyntax(token.Text, CommentKind.Line));
+                    _tokenIndicesUsed.Add(token.TokenIndex);
                 }
                 else if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT)
                 {
                     comments.Add(new CommentSyntax(token.Text, CommentKind.Block));
+                    _tokenIndicesUsed.Add(token.TokenIndex);
                 }
             }
         }

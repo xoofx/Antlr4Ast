@@ -15,7 +15,7 @@ public sealed class LexerChar : ElementSyntax
 
     public string Value { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
         builder.Append(Value);

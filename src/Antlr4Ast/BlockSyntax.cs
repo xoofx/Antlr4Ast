@@ -8,12 +8,12 @@ namespace Antlr4Ast;
 
 public sealed class BlockSyntax : AlternativeListSyntax
 {
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
         else if (Label != null) builder.Append(Label).Append('=');
         builder.Append("( ");
-        base.ToText(builder);
+        base.ToTextImpl(builder, options);
         builder.Append(" )");
         builder.Append(Suffix.ToText());
     }

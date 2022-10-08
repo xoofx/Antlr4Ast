@@ -18,7 +18,7 @@ public sealed class CharacterRange : ElementSyntax
 
     public string To { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
 

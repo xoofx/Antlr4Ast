@@ -15,12 +15,12 @@ public sealed class Token : ElementSyntax
 
     public string Name { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (IsNot) builder.Append("~ ");
         else if (Label != null) builder.Append(Label).Append('=');
         builder.Append(Name);
         builder.Append(Suffix.ToText());
-        Options?.ToText(builder);
+        Options?.ToText(builder, options);
     }
 }

@@ -18,7 +18,7 @@ public sealed class ElementOptionSyntax : SyntaxNode
 
     public string? Value { get; set; }
 
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append(Name);
         if (Value is not null) builder.Append(" = ").Append(Value.ToString(CultureInfo.InvariantCulture));

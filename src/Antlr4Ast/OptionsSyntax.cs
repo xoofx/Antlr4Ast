@@ -15,12 +15,12 @@ public class OptionsSyntax : SyntaxNode
     
     public List<OptionSyntax> Items { get; }
     
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append("options { ");
         foreach(var option in Items)
         {
-            builder.Append(option);
+            option.ToText(builder, options);
             builder.Append("; ");
         }
 

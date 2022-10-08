@@ -8,9 +8,9 @@ namespace Antlr4Ast;
 
 public sealed class DotSyntax : ElementSyntax
 {
-    public override void ToText(StringBuilder builder)
+    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append('.');
-        Options?.ToText(builder);
+        Options?.ToText(builder, options);
     }
 }
