@@ -6,7 +6,6 @@ root = true
 # All Files
 [*]
 charset = utf-8
-end_of_line = crlf
 indent_style = space
 indent_size = 4
 insert_final_newline = false
@@ -133,3 +132,6 @@ dotnet_style_prefer_simplified_interpolation = true:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
 dotnet_style_operator_placement_when_wrapping = beginning_of_line
 tab_width = 4
+
+[*.g4]
+end_of_line = lf
