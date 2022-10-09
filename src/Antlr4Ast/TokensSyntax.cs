@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class TokensSyntax : SyntaxNode
+public sealed class TokensSyntax : SyntaxNode
 {
     public TokensSyntax()
     {

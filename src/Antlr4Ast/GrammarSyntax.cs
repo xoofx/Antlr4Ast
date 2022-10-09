@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class GrammarSyntax : SyntaxNode
+public sealed class GrammarSyntax : SyntaxNode
 {
     public GrammarSyntax()
     {

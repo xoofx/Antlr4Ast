@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class CommentSyntax
+public sealed class CommentSyntax
 {
     public CommentSyntax(string text, CommentKind kind)
     {

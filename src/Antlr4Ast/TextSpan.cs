@@ -6,12 +6,12 @@ namespace Antlr4Ast;
 
 public struct TextSpan
 {
-    public TextSpan(string? filePath) : this()
+    public TextSpan(string filePath) : this()
     {
         FilePath = filePath;
     }
 
-    public string? FilePath { get; set; }
+    public string FilePath { get; set; }
 
     public TextLocation Begin { get; set; }
 

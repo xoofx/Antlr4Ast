@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class ImportSyntax : SyntaxNode
+public sealed class ImportSyntax : SyntaxNode
 {
     public ImportSyntax()
     {

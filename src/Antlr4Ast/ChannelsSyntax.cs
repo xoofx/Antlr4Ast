@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class ChannelsSyntax : SyntaxNode
+public sealed class ChannelsSyntax : SyntaxNode
 {
     public ChannelsSyntax()
     {

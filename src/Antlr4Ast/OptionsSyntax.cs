@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Antlr4Ast;
 
-public class OptionsSyntax : SyntaxNode
+public sealed class OptionsSyntax : SyntaxNode
 {
     public OptionsSyntax()
     {

@@ -7,7 +7,7 @@ using Antlr4.Runtime.Tree;
 
 namespace Antlr4Ast;
 
-internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
+internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 {
     private readonly CommonTokenStream _tokens;
     private readonly HashSet<int> _tokenIndicesUsed;
