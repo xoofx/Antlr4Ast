@@ -10,6 +10,35 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.11.1" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <Description>Antlr4Ast is a .NET library that provides a parser and abstract syntax tree (AST) for ANTLR4/g4 files.</Description>
+    <Copyright>Alexandre Mutel</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Alexandre Mutel</Authors>
+    <PackageTags>antlr;antlr4;parser;ast</PackageTags>
+    <PackageIcon>antlr4ast.png</PackageIcon>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/xoofx/Varena</PackageProjectUrl>
+    <PackageLicenseExpression>BSD-2-Clause</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!--Add support for sourcelink-->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../img/antlr4ast.png" Pack="true" PackagePath="" />
+    <None Include="../../readme.md" Pack="true" PackagePath="/" />
+    <PackageReference Include="MinVer" Version="4.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.*" PrivateAssets="All" />
+  </ItemGroup>
+
   <!--
   <ItemGroup>
     <PackageReference Include="Antlr4BuildTasks" Version="11.5.0" />

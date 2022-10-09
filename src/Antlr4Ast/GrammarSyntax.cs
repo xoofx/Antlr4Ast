@@ -176,18 +176,21 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
         }
     }
 
+    /// <inheritdoc />
     public override IEnumerable<RuleSyntax> GetAllRules()
     {
         foreach (var rule in LexerRules) yield return rule;
         foreach (var rule in ParserRules) yield return rule;
     }
 
+    /// <inheritdoc />
     protected override void AddRuleImpl(RuleSyntax rule)
     {
         if (rule.IsLexer) LexerRules.Add(rule);
         else ParserRules.Add(rule);
     }
 
+    /// <inheritdoc />
     protected override void MergeFromImpl(SyntaxRuleContainer container)
     {
         var grammar = (GrammarSyntax)container;

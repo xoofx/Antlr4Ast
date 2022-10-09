@@ -42,11 +42,13 @@ public sealed class LexerModeSyntax : SyntaxRuleContainer
         }
     }
 
+    /// <inheritdoc />
     public override IEnumerable<RuleSyntax> GetAllRules()
     {
         return LexerRules;
     }
 
+    /// <inheritdoc />
     protected override void AddRuleImpl(RuleSyntax rule)
     {
         LexerRules.Add(rule);
