@@ -10,13 +10,11 @@ namespace Antlr4Ast;
 internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 {
     private readonly CommonTokenStream _tokens;
-    private readonly GrammarSyntax _grammar;
     private readonly HashSet<int> _tokenIndicesUsed;
 
-    public InternalAntlr4Visitor(CommonTokenStream tokens, GrammarSyntax grammarSyntax)
+    public InternalAntlr4Visitor(CommonTokenStream tokens)
     {
         _tokens = tokens;
-        _grammar = grammarSyntax;
         _tokenIndicesUsed = new HashSet<int>();
     }
 
@@ -34,20 +32,21 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //   : (LEXER GRAMMAR | PARSER GRAMMAR | GRAMMAR)
         //   ;
         // Attach comments
-        SpanAndComment(context, _grammar);
+        var grammar = new GrammarSyntax();
+        SpanAndComment(context, grammar);
 
         // Parse GrammarDecl
         var grammarType = context.grammarDecl().grammarType();
-        _grammar.Kind = GrammarKind.Full;
+        grammar.Kind = GrammarKind.Full;
         if (grammarType.LEXER() != null)
         {
-            _grammar.Kind = GrammarKind.Lexer;
+            grammar.Kind = GrammarKind.Lexer;
         }
         else if (grammarType.PARSER() != null)
         {
-            _grammar.Kind = GrammarKind.Parser;
+            grammar.Kind = GrammarKind.Parser;
         }
-        _grammar.Name = GetIdentifier(context.grammarDecl().identifier());
+        grammar.Name = GetIdentifier(context.grammarDecl().identifier());
 
         // Parse Options/Imports
         foreach (var prequel in context.prequelConstruct())
@@ -56,16 +55,16 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             switch (node)
             {
                 case OptionsSyntax optionList:
-                    _grammar.Options.Add(optionList);
+                    grammar.Options.Add(optionList);
                     break;
                 case ImportSyntax importSyntax:
-                    _grammar.Imports.Add(importSyntax);
+                    grammar.Imports.Add(importSyntax);
                     break;
                 case ChannelsSyntax channelsSyntax:
-                    _grammar.Channels.Add(channelsSyntax);
+                    grammar.Channels.Add(channelsSyntax);
                     break;
                 case TokensSyntax tokensSyntax:
-                    _grammar.Tokens.Add(tokensSyntax);
+                    grammar.Tokens.Add(tokensSyntax);
                     break;
             }
         }
@@ -76,20 +75,20 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             var ruleSyntax = (RuleSyntax)VisitRuleSpec(ruleSpec)!;
             if (ruleSyntax.IsLexer)
             {
-                _grammar.LexerRules.Add(ruleSyntax);
+                grammar.LexerRules.Add(ruleSyntax);
             }
             else
             {
-                _grammar.ParserRules.Add(ruleSyntax);
+                grammar.ParserRules.Add(ruleSyntax);
             }
         }
 
         foreach (var mode in context.modeSpec())
         {
-            _grammar.LexerModes.Add((LexerModeSyntax)VisitModeSpec(mode)!);
+            grammar.LexerModes.Add((LexerModeSyntax)VisitModeSpec(mode)!);
         }
 
-        return null;
+        return grammar;
     }
 
     public override SyntaxNode? VisitLexerRuleSpec(ANTLRv4Parser.LexerRuleSpecContext context)
@@ -745,19 +744,10 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         node.Suffix = (suffix.PLUS() != null ? SuffixKind.Plus : suffix.STAR() != null ? SuffixKind.Star : SuffixKind.Optional) + delta;
     }
 
-    private static TextSpan CreateSpan(ParserRuleContext context) => CreateSpan(context.Start, context.Stop);
+    private static TextSpan CreateSpan(ParserRuleContext context) => Antlr4Parser.CreateSpan(context.Start, context.Stop);
 
-    private static TextSpan CreateSpan(ITerminalNode terminal) => CreateSpan(terminal.Symbol, terminal.Symbol);
+    private static TextSpan CreateSpan(ITerminalNode terminal) => Antlr4Parser.CreateSpan(terminal.Symbol, terminal.Symbol);
     
-    private static TextSpan CreateSpan(IToken start, IToken stop)
-    {
-        return new TextSpan(start.TokenSource.SourceName)
-        {
-            Begin = new TextLocation(start.StartIndex, start.Line, start.Column),
-            End = new TextLocation(stop.StopIndex, stop.Line, stop.Column)
-        };
-    }
-
     private T SpanAndComment<T>(ITerminalNode terminal, T node) where T : SyntaxNode
     {
         node.Span = CreateSpan(terminal);

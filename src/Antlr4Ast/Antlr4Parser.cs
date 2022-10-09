@@ -10,24 +10,54 @@ public static class Antlr4Parser
 {
     public static GrammarSyntax Parse(string input, string fileName = "<input>")
     {
-        var grammar = new GrammarSyntax();
-        TextWriter? outputWriter = null;
-        TextWriter? errorWriter = null;
-        
         var streamReader = new StringReader(input);
         var str = new AntlrInputStream(streamReader)
         {
             name = fileName
         };
 
-        var lexer = new ANTLRv4Lexer(str, outputWriter ?? Console.Out, errorWriter ?? Console.Error);
+        var lexer = new ANTLRv4Lexer(str, TextWriter.Null, TextWriter.Null);
         var tokens = new CommonTokenStream(lexer);
-        var parser = new ANTLRv4Parser(tokens);
+        var parser = new ANTLRv4Parser(tokens, TextWriter.Null, TextWriter.Null);
+        var listener = new ErrorListener();
+        parser.AddErrorListener(listener);
         var grammarSpec = parser.grammarSpec();
+        GrammarSyntax grammar;
+        if (listener.Messages.Count > 0)
+        {
+            grammar = new GrammarSyntax();
+            grammar.ErrorMessages.AddRange(listener.Messages);
+        }
+        else
+        {
+            var visitor = new InternalAntlr4Visitor(tokens);
+            grammar = (GrammarSyntax)visitor.VisitGrammarSpec(grammarSpec)!;
+        }
 
-        var visitor = new InternalAntlr4Visitor(tokens, grammar);
-        visitor.VisitGrammarSpec(grammarSpec);
-    
         return grammar;
+    }
+    internal static TextSpan CreateSpan(IToken start, IToken stop)
+    {
+        return new TextSpan(start.TokenSource.SourceName)
+        {
+            Begin = new TextLocation(start.StartIndex, start.Line, start.Column),
+            End = new TextLocation(stop.StopIndex, stop.Line, stop.Column)
+        };
+    }
+
+    private class ErrorListener : BaseErrorListener
+    {
+        public ErrorListener()
+        {
+            Messages = new List<AntlrErrorMessage>();
+        }
+
+        public List<AntlrErrorMessage> Messages { get; }
+
+
+        public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        {
+            Messages.Add(new AntlrErrorMessage(CreateSpan(offendingSymbol, offendingSymbol), msg));
+        }
     }
 }

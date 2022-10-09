@@ -25,11 +25,14 @@ public abstract class SyntaxNode
 
     public void ToText(StringBuilder builder, AntlrFormattingOptions options)
     {
-        if (options.MultiLineWithComments)
+        if (CanOutputComments)
         {
-            foreach (var comment in CommentsBefore)
+            if (options.MultiLineWithComments)
             {
-                builder.AppendLine(comment.Text);
+                foreach (var comment in CommentsBefore)
+                {
+                    builder.AppendLine(comment.Text);
+                }
             }
         }
 
@@ -37,14 +40,19 @@ public abstract class SyntaxNode
         ToTextImpl(builder, options);
         ToTextImplAfter(builder, options);
 
-        if (options.MultiLineWithComments)
+        if (CanOutputComments)
         {
-            foreach (var comment in CommentsAfter)
+            if (options.MultiLineWithComments)
             {
-                builder.Append(' ').AppendLine(comment.Text);
+                foreach (var comment in CommentsAfter)
+                {
+                    builder.Append(' ').AppendLine(comment.Text);
+                }
             }
         }
     }
+
+    protected virtual bool CanOutputComments => true;
 
     protected virtual void ToTextImplBefore(StringBuilder builder, AntlrFormattingOptions options) {}
 

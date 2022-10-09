@@ -11,6 +11,7 @@ public class GrammarSyntax : SyntaxNode
     public GrammarSyntax()
     {
         Name = string.Empty;
+        ErrorMessages = new List<AntlrErrorMessage>();
         Options = new List<OptionsSyntax>();
         Imports = new List<ImportSyntax>();
         Tokens = new List<TokensSyntax>();
@@ -21,6 +22,10 @@ public class GrammarSyntax : SyntaxNode
     }
 
     public string Name { get; set; }
+
+    public List<AntlrErrorMessage> ErrorMessages { get; }
+
+    public bool HasErrors => ErrorMessages.Count > 0;
 
     public GrammarKind Kind { get; set; }
 
@@ -38,8 +43,21 @@ public class GrammarSyntax : SyntaxNode
 
     public List<LexerModeSyntax> LexerModes { get; }
 
+    protected override bool CanOutputComments => !HasErrors;
+
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
+        // If we have any errors, output them
+        if (HasErrors)
+        {
+            foreach (var antlrErrorMessage in ErrorMessages)
+            {
+                builder.AppendLine(antlrErrorMessage.ToString());
+            }
+
+            return;
+        }
+
         if (Kind != GrammarKind.Full)
         {
             builder.Append(Kind.ToText()).Append(' ');

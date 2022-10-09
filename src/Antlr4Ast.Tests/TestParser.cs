@@ -2,22 +2,13 @@ namespace Antlr4Ast.Tests;
 
 public class TestParser
 {
-
     [Test]
-    public void TestBasic()
+    public Task TestParserError()
     {
-        var grammar = Antlr4Parser.Parse(@"
-parser grammar HelloParser;
-
-options { tokenVocab = HelloLexer; }
-
-module
-    : TEST EOF
-    ;
-");
-
-
-
+        //           01234567890123456789 0123456789
+        var input = "grammar HelloWorld;\nhello +\n";
+        var grammar = Antlr4Parser.Parse(input, "/this/file.g4");
+        return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
     [Test]

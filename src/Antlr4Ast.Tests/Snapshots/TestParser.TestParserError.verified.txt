@@ -1,0 +1,1 @@
+﻿/this/file.g4(2, 7, 2, 7): error: mismatched input '+' expecting {BEGIN_ARGUMENT, OPTIONS, 'returns', 'locals', 'throws', COLON, AT}
