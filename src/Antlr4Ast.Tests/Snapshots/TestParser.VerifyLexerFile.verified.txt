@@ -41,15 +41,15 @@ lexer grammar ANTLRv4Lexer;
 
 options { superClass = LexerAdaptor;  }
 
-import LexBasic; // Standard set of fragments
+import LexBasic;
 
-
+// Standard set of fragments
 tokens { TOKEN_REF, RULE_REF, LEXER_CHAR_SET }
 
-channels { OFF_CHANNEL, COMMENT } // -------------------------
- // Comments
+channels { OFF_CHANNEL, COMMENT }
 
-
+// -------------------------
+// Comments
 DOC_COMMENT
   : DocComment -> channel(COMMENT)
   ;
@@ -331,19 +331,19 @@ UNTERMINATED_ARGUMENT
 ARGUMENT_CONTENT
   : .
   ;
- // TODO: This grammar and the one used in the Intellij Antlr4 plugin differ
- // for "actions". This needs to be resolved at some point.
- // The Intellij Antlr4 grammar is here:
- // https://github.com/antlr/intellij-plugin-v4/blob/1f36fde17f7fa63cb18d7eeb9cb213815ac658fb/src/main/antlr/org/antlr/intellij/plugin/parser/ANTLRv4Lexer.g4#L587
- // -------------------------
- // Target Language Actions
- //
- // Many language targets use {} as block delimiters and so we
- // must recursively match {} delimited blocks to balance the
- // braces. Additionally, we must make some assumptions about
- // literal string representation in the target language. We assume
- // that they are delimited by ' or " and so consume these
- // in their own alts so as not to inadvertantly match {}.
+// TODO: This grammar and the one used in the Intellij Antlr4 plugin differ
+// for "actions". This needs to be resolved at some point.
+// The Intellij Antlr4 grammar is here:
+// https://github.com/antlr/intellij-plugin-v4/blob/1f36fde17f7fa63cb18d7eeb9cb213815ac658fb/src/main/antlr/org/antlr/intellij/plugin/parser/ANTLRv4Lexer.g4#L587
+// -------------------------
+// Target Language Actions
+//
+// Many language targets use {} as block delimiters and so we
+// must recursively match {} delimited blocks to balance the
+// braces. Additionally, we must make some assumptions about
+// literal string representation in the target language. We assume
+// that they are delimited by ' or " and so consume these
+// in their own alts so as not to inadvertantly match {}.
 mode TargetLanguageAction;
 NESTED_ACTION
   : LBrace -> type(ACTION_CONTENT), pushMode(TargetLanguageAction)
@@ -375,7 +375,7 @@ UNTERMINATED_ACTION
 ACTION_CONTENT
   : .
   ;
- // -------------------------
+// -------------------------
 mode LexerCharSet;
 LEXER_CHAR_SET_BODY
   : ( ~ [\]\\] | EscAny )+ -> more

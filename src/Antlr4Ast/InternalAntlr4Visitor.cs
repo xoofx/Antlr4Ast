@@ -97,7 +97,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             lexerRule.Options.Add((OptionsSyntax)VisitOptionsSpec(context.optionsSpec())!);
         }
 
-        return SpanAndComment(context, lexerRule, false);
+        return SpanAndComment(context, lexerRule);
     }
 
     public override SyntaxNode? VisitParserRuleSpec(ANTLRv4Parser.ParserRuleSpecContext context)
@@ -115,7 +115,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             }
         }
 
-        return SpanAndComment(context, rule, false);
+        return SpanAndComment(context, rule);
     }
 
     public override SyntaxNode? VisitLexerAltList(ANTLRv4Parser.LexerAltListContext context)
@@ -609,13 +609,13 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
     {
         // optionsSpec
         // : OPTIONS(option SEMI) * RBRACE;
-        var optionList = SpanAndComment(context, new OptionsSyntax());
+        var optionList = new OptionsSyntax();
         foreach (var option in context.option())
         {
             optionList.Items.Add((OptionSyntax)VisitOption(option)!);
         }
 
-        return optionList;
+        return SpanAndComment(context, optionList);
     }
 
     public override SyntaxNode? VisitOption(ANTLRv4Parser.OptionContext option)
@@ -658,7 +658,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //delegateGrammars
         //   : IMPORT delegateGrammar (COMMA delegateGrammar)* SEMI
         //   ;
-        var importSyntax = SpanAndComment(context, new ImportSyntax());
+        var importSyntax = new ImportSyntax();
 
         foreach(var delegateGrammar in context.delegateGrammar())
         {
@@ -671,7 +671,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             importSyntax.Names.Add(importName);
         }
 
-        return importSyntax;
+        return SpanAndComment(context, importSyntax);
     }
 
     public override SyntaxNode? VisitTokensSpec(ANTLRv4Parser.TokensSpecContext context)
@@ -682,14 +682,14 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //idList
         //   : identifier (COMMA identifier)* COMMA?
         //   ;
-        var tokens = SpanAndComment(context, new TokensSyntax());
+        var tokens = new TokensSyntax();
 
         foreach (var id in context.idList().identifier())
         {
             tokens.Ids.Add(GetIdentifier(id));
         }
 
-        return tokens;
+        return SpanAndComment(context, tokens);
     }
 
     public override SyntaxNode? VisitChannelsSpec(ANTLRv4Parser.ChannelsSpecContext context)
@@ -697,14 +697,14 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //channelsSpec
         //   : CHANNELS idList? RBRACE
         //   ;
-        var tokens = SpanAndComment(context, new ChannelsSyntax());
+        var tokens = new ChannelsSyntax();
 
         foreach (var id in context.idList().identifier())
         {
             tokens.Ids.Add(GetIdentifier(id));
         }
 
-        return tokens;
+        return SpanAndComment(context, tokens);
     }
     
     private static void ApplySuffix(ANTLRv4Parser.EbnfSuffixContext suffix, ElementSyntax node)
@@ -726,34 +726,36 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         };
     }
 
-    private T SpanAndComment<T>(ITerminalNode terminal, T node, bool collectAfter = true) where T : SyntaxNode
+    private T SpanAndComment<T>(ITerminalNode terminal, T node) where T : SyntaxNode
     {
         node.Span = CreateSpan(terminal);
-        AddTokens(_tokens.GetHiddenTokensToLeft(terminal.Symbol.TokenIndex), node.CommentsBefore);
-        if (collectAfter)
-        {
-            AddTokens(_tokens.GetHiddenTokensToRight(terminal.Symbol.TokenIndex), node.CommentsAfter);
-        }
+        AddComments(_tokens.GetHiddenTokensToLeft(terminal.Symbol.TokenIndex), node.CommentsBefore);
+        AddComments(_tokens.GetHiddenTokensToRight(terminal.Symbol.TokenIndex), node.CommentsAfter, true);
         return node;
     }
 
-    private T SpanAndComment<T>(ParserRuleContext context, T node, bool collectAfter = true) where T : SyntaxNode
+    private T SpanAndComment<T>(ParserRuleContext context, T node) where T : SyntaxNode
     {
         node.Span = CreateSpan(context);
-        AddTokens(_tokens.GetHiddenTokensToLeft(context.Start.TokenIndex), node.CommentsBefore);
-        if (collectAfter)
-        {
-            AddTokens(_tokens.GetHiddenTokensToRight(context.Stop.TokenIndex), node.CommentsAfter);
-        }
+        AddComments(_tokens.GetHiddenTokensToLeft(context.Start.TokenIndex), node.CommentsBefore);
+        AddComments(_tokens.GetHiddenTokensToRight(context.Stop.TokenIndex), node.CommentsAfter, true);
         return node;
     }
 
-    void AddTokens(IList<IToken>? tokens, List<CommentSyntax> comments)
+    private static readonly char[] EndOfLineChars = new[] { '\r', '\n' };
+
+    void AddComments(IList<IToken>? tokens, List<CommentSyntax> comments, bool isAfter = false)
     {
         if (tokens is null) return;
 
         foreach (var token in tokens)
         {
+            // Don't collect tokens after if they are not on the same line
+            if (isAfter && token.Type == ANTLRv4Lexer.WS && token.Text.IndexOfAny(EndOfLineChars) >= 0)
+            {
+                break;
+            }
+
             if (_tokenIndicesUsed.Contains(token.TokenIndex)) continue;
 
             if (token.Type == ANTLRv4Lexer.DOC_COMMENT)
