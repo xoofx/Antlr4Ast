@@ -22,6 +22,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitGrammarSpec(ANTLRv4Parser.GrammarSpecContext context)
     {
+        // Attach comments
+        SpanAndComment(context, _grammar);
+
         // Parse GrammarDecl
         var grammarType = context.grammarDecl().grammarType();
         _grammar.Kind = GrammarKind.Full;
