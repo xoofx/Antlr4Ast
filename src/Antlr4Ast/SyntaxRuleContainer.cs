@@ -22,7 +22,7 @@ public abstract class SyntaxRuleContainer : SyntaxNode
     }
 
     /// <summary>
-    /// Updates the map of rules (rule name => rule) so that <see cref="TryGetRuleByName"/>.
+    /// Updates the map of rules (rule name => rule) so that <see cref="TryGetRule"/>.
     /// </summary>
     public void UpdateRulesMap()
     {
@@ -64,7 +64,7 @@ public abstract class SyntaxRuleContainer : SyntaxNode
     /// <param name="name">The name of the rule to find.</param>
     /// <param name="syntax">The associated rule if it returns true.</param>
     /// <returns><c>true</c> if the rule with the specified name was found.</returns>
-    public bool TryGetRuleByName(string name, [MaybeNullWhen(false)] out RuleSyntax syntax)
+    public bool TryGetRule(string name, [MaybeNullWhen(false)] out RuleSyntax syntax)
     {
         return _mapRules.TryGetValue(name, out syntax);
     }

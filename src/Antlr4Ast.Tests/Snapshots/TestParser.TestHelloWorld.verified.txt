@@ -1,0 +1,16 @@
+﻿grammar MyGrammar;
+
+// Parser rules starting here!
+expr_a_plus_b
+  : TOKEN_A '+' TOKEN_B
+  ;
+
+// Lexer rules starting here!
+TOKEN_A
+  : 'a'
+  ;
+
+TOKEN_B
+  : 'b'
+  ;
+

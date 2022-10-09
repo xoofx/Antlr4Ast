@@ -51,6 +51,8 @@ public static class Antlr4Parser
         {
             var visitor = new InternalAntlr4Visitor(tokens);
             grammar = (GrammarSyntax)visitor.VisitGrammarSpec(grammarSpec)!;
+            // Update the map after loading it.
+            grammar.UpdateRulesMap();
         }
 
         return grammar;

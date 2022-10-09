@@ -5,6 +5,23 @@ namespace Antlr4Ast.Tests;
 public class TestParser
 {
     [Test]
+    public Task TestHelloWorld()
+    {
+        var input = @"grammar MyGrammar;
+// Parser rules starting here!
+expr_a_plus_b
+    : TOKEN_A '+' TOKEN_B
+    ;
+// Lexer rules starting here!
+TOKEN_A: 'a';
+TOKEN_B: 'b';
+";
+        // Parse the grammar
+        var grammar = Antlr4Parser.Parse(input);
+        return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
+    }
+
+    [Test]
     public Task TestParserError()
     {
         //           01234567890123456789 0123456789
@@ -178,9 +195,9 @@ TOKEN
         // Our parser grammar is now a full grammar
         parserGrammar.Kind = GrammarKind.Full;
 
-        Assert.True(parserGrammar.TryGetRuleByName("STRING_LITERAL", out _), "Unable to get STRING_LITERAL lexer rule from merged");
+        Assert.True(parserGrammar.TryGetRule("STRING_LITERAL", out _), "Unable to get STRING_LITERAL lexer rule from merged");
         Assert.True(parserGrammar.LexerModes.Any(x => x.Name == "LexerCharSet"), "Unable to find the merged LexerCharSet");
-        Assert.True(parserGrammar.TryGetRuleByName("BlockComment", out _), "Unable to get BlockComment lexer rule from merged");
+        Assert.True(parserGrammar.TryGetRule("BlockComment", out _), "Unable to get BlockComment lexer rule from merged");
 
         return Verify(parserGrammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
