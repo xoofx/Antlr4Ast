@@ -165,6 +165,26 @@ TOKEN
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
+    [Test]
+    public Task VerifyMergeGrammar()
+    {
+        var parserGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
+        var lexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
+        var basicLexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
+
+        lexerGrammar.MergeFrom(basicLexerGrammar);
+        parserGrammar.MergeFrom(lexerGrammar);
+
+        // Our parser grammar is now a full grammar
+        parserGrammar.Kind = GrammarKind.Full;
+
+        Assert.True(parserGrammar.TryGetRuleByName("STRING_LITERAL", out _), "Unable to get STRING_LITERAL lexer rule from merged");
+        Assert.True(parserGrammar.LexerModes.Any(x => x.Name == "LexerCharSet"), "Unable to find the merged LexerCharSet");
+        Assert.True(parserGrammar.TryGetRuleByName("BlockComment", out _), "Unable to get BlockComment lexer rule from merged");
+
+        return Verify(parserGrammar.ToString(GetFormattingOptions()), GetVerifySettings());
+    }
+
     private AntlrFormattingOptions GetFormattingOptions()
     {
         return new AntlrFormattingOptions() { MultiLineWithComments = true };

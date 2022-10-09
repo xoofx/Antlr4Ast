@@ -9,7 +9,7 @@ namespace Antlr4Ast;
 /// <summary>
 /// The main entry class representing an ANTLR4/g4 grammar content.
 /// </summary>
-public sealed class GrammarSyntax : SyntaxNode
+public sealed class GrammarSyntax : SyntaxRuleContainer
 {
     /// <summary>
     /// Creates a new instance of this object.
@@ -173,6 +173,76 @@ public sealed class GrammarSyntax : SyntaxNode
         foreach (var lexerMode in LexerModes)
         {
             lexerMode.ToText(builder, options);
+        }
+    }
+
+    public override IEnumerable<RuleSyntax> GetAllRules()
+    {
+        foreach (var rule in LexerRules) yield return rule;
+        foreach (var rule in ParserRules) yield return rule;
+    }
+
+    protected override void AddRuleImpl(RuleSyntax rule)
+    {
+        if (rule.IsLexer) LexerRules.Add(rule);
+        else ParserRules.Add(rule);
+    }
+
+    protected override void MergeFromImpl(SyntaxRuleContainer container)
+    {
+        var grammar = (GrammarSyntax)container;
+
+        // Merge tokens
+        foreach (var tokens in grammar.Tokens)
+        {
+            var newTokens = new TokensSyntax
+            {
+                Span = tokens.Span
+            };
+            newTokens.Ids.AddRange(tokens.Ids);
+            newTokens.CommentsBefore.AddRange(tokens.CommentsBefore);
+            newTokens.CommentsAfter.AddRange(tokens.CommentsAfter);
+            Tokens.Add(newTokens);
+        }
+
+        // Merge channels
+        foreach (var channels in grammar.Channels)
+        {
+            var newChannels = new ChannelsSyntax()
+            {
+                Span = channels.Span
+            };
+            newChannels.Ids.AddRange(channels.Ids);
+            newChannels.CommentsBefore.AddRange(channels.CommentsBefore);
+            newChannels.CommentsAfter.AddRange(channels.CommentsAfter);
+            Channels.Add(newChannels);
+        }
+
+        // Merge lexer modes
+        foreach (var mode in grammar.LexerModes)
+        {
+            var thisMode = LexerModes.FirstOrDefault(x => x.Name == mode.Name);
+            if (thisMode != null)
+            {
+                thisMode.MergeFrom(mode);
+            }
+            else
+            {
+                var lexerMode = new LexerModeSyntax(mode.Name)
+                {
+                    Span = mode.Span
+                };
+                lexerMode.CommentsBefore.AddRange(mode.CommentsBefore);
+                lexerMode.CommentsAfter.AddRange(mode.CommentsAfter);
+                lexerMode.LexerRules.AddRange(mode.LexerRules);
+                LexerModes.Add(lexerMode);
+            }
+        }
+
+        // Make sure that all maps for lexer modes are up to date after a merge.
+        foreach (var mode in LexerModes)
+        {
+            mode.UpdateRulesMap();
         }
     }
 }
