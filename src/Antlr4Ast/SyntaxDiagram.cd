@@ -39,28 +39,28 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.DotSyntax" Collapsed="true">
-    <Position X="11.5" Y="5.25" Width="1.5" />
+    <Position X="11.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
       <FileName>DotSyntax.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.LiteralSyntax" Collapsed="true">
-    <Position X="13.25" Y="4.25" Width="1.5" />
+    <Position X="11.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAA=</HashCode>
       <FileName>LiteralSyntax.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.ElementOptionSyntax" Collapsed="true">
-    <Position X="11.5" Y="3.25" Width="1.5" />
+    <Position X="14.75" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
       <FileName>ElementOptionSyntax.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.LexerCommandSyntax" Collapsed="true">
-    <Position X="11.5" Y="4.25" Width="1.5" />
+    <Position X="12.5" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAQAAAQAAAAAAA=</HashCode>
       <FileName>LexerCommandSyntax.cs</FileName>
@@ -204,14 +204,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.CharacterRange" Collapsed="true">
-    <Position X="13.25" Y="5.25" Width="1.5" />
+    <Position X="13.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAQAAAAAAA=</HashCode>
       <FileName>CharacterRange.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.EmptySyntax" Collapsed="true">
-    <Position X="11.5" Y="6.25" Width="1.5" />
+    <Position X="9.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
       <FileName>EmptySyntax.cs</FileName>
@@ -225,7 +225,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.LexerChar" Collapsed="true">
-    <Position X="13.25" Y="6.25" Width="1.5" />
+    <Position X="11.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAA=</HashCode>
       <FileName>LexerChar.cs</FileName>
@@ -251,7 +251,7 @@
   <Class Name="Antlr4Ast.SyntaxRuleContainer" Collapsed="true">
     <Position X="3" Y="5.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>QAAAAAAAAAgCAAIAAAAAAAAAAAAEAAABQAAACAAAAAA=</HashCode>
+      <HashCode>QAAAAAAAAAgCAAIAAAAAAAAAAAAAAAARQAAACAAAAAA=</HashCode>
       <FileName>SyntaxRuleContainer.cs</FileName>
     </TypeIdentifier>
   </Class>
