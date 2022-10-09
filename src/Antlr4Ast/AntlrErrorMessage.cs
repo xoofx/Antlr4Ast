@@ -4,54 +4,19 @@
 
 namespace Antlr4Ast;
 
-public sealed class AntlrErrorMessage : IEquatable<AntlrErrorMessage>
+public sealed class AntlrErrorMessage
 {
     public AntlrErrorMessage(TextSpan span, string message)
     {
         Span = span;
         Message = message;
     }
-    public TextSpan Span { get; set; }
+    public TextSpan Span { get; }
 
-    public string Message { get; set; }
+    public string Message { get; }
     
     public override string ToString()
     {
         return $"{Span}: error: {Message}";
-    }
-
-    public bool Equals(AntlrErrorMessage? other)
-    {
-        if (ReferenceEquals(null, other))
-        {
-            return false;
-        }
-
-        if (ReferenceEquals(this, other))
-        {
-            return true;
-        }
-
-        return Span.Equals(other.Span) && Message == other.Message;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return ReferenceEquals(this, obj) || obj is AntlrErrorMessage other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Span, Message);
-    }
-
-    public static bool operator ==(AntlrErrorMessage? left, AntlrErrorMessage? right)
-    {
-        return Equals(left, right);
-    }
-
-    public static bool operator !=(AntlrErrorMessage? left, AntlrErrorMessage? right)
-    {
-        return !Equals(left, right);
     }
 }

@@ -13,7 +13,11 @@ public sealed class BlockSyntax : AlternativeListSyntax
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");
-        Options?.ToText(builder, options);
+        if (Options != null)
+        {
+            Options.ToText(builder, options);
+            builder.Append(": ");
+        }
         base.ToTextImpl(builder, options);
         builder.Append(" )");
     }

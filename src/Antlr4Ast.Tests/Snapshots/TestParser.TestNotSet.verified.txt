@@ -1,0 +1,7 @@
+﻿grammar TestNotSet;
+
+rule
+  : ~ TOKEN
+  | ~ 'a' .. 'z'
+  ;
+

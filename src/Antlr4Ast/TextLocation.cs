@@ -4,7 +4,7 @@
 
 namespace Antlr4Ast;
 
-public record struct TextLocation(int Offset, int Line, int Column)
+public readonly record struct TextLocation(int Offset, int Line, int Column)
 {
     public override string ToString()
     {

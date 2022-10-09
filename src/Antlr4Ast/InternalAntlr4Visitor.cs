@@ -306,31 +306,22 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //   ;
         if (atom.terminal() is { } terminal)
         {
-            if (terminal.TOKEN_REF() is { } tokenRef)
-            {
-                return SpanAndComment(terminal, new Token(tokenRef.GetText()));
-            }
-            else if (terminal.STRING_LITERAL() is { } stringLiteral)
-            {
-                return SpanAndComment(stringLiteral, new LiteralSyntax(GetStringLiteral(stringLiteral)));
-            }
+            return VisitTerminal(terminal);
         }
-        else if (atom.ruleref() is { } ruleRef)
+        if (atom.ruleref() is { } ruleRef)
         {
-            return SpanAndComment(ruleRef, new RuleRefSyntax(ruleRef.RULE_REF().GetText()));
+            var elementOptions = ruleRef.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+            return SpanAndComment(ruleRef, new RuleRefSyntax(ruleRef.RULE_REF().GetText()) { ElementOptions = elementOptions } );
         }
-        else if (atom.notSet() is { } notSet)
+        if (atom.notSet() is { } notSet)
         {
             return VisitNotSet(notSet);
         }
-        else if (atom.DOT() != null)
+        else
         {
             var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
             return SpanAndComment(atom, new DotSyntax() { ElementOptions = elementOptions });
         }
-
-        // Not supported
-        return null;
     }
 
     public override SyntaxNode? VisitModeSpec(ANTLRv4Parser.ModeSpecContext context)
@@ -387,11 +378,6 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             node = (ElementSyntax)(labeledElement.lexerAtom() is { } atom ? VisitLexerAtom(atom)! : VisitLexerBlock(labeledElement.lexerBlock())!);
             node.Label = GetIdentifier(identifier);
             node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
-
-            if (context.ebnfSuffix() is { } suffix)
-            {
-                ApplySuffix(suffix, node);
-            }
         }
         else if (context.lexerBlock() is { } lexerBlock)
         {
@@ -452,10 +438,13 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //    : identifier
         //    | identifier ASSIGN(identifier | STRING_LITERAL)
         //    ;
-        var elementOption = new ElementOptionSyntax(GetIdentifier(context.identifier()[0]))
+        var identifiers = context.identifier();
+        var elementOption = new ElementOptionSyntax(GetIdentifier(identifiers[0]));
+        if (context.ASSIGN() is not null)
         {
-            Value = context.identifier().Length == 2 ? GetIdentifier(context.identifier()[1]) : SpanAndComment(context.STRING_LITERAL(), new LiteralSyntax(GetStringLiteral(context.STRING_LITERAL())))
-        };
+            elementOption.Value = identifiers.Length == 2 ? GetIdentifier(identifiers[1]) : SpanAndComment(context.STRING_LITERAL(), new LiteralSyntax(GetStringLiteral(context.STRING_LITERAL())));
+        }
+
         return SpanAndComment(context, elementOption);
     }
 
@@ -559,12 +548,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             return VisitCharacterRange(characterRange);
 
         }
-        else if (context.LEXER_CHAR_SET() is {} lexerCharSet)
-        {
-            return VisitLexerCharSet(context, lexerCharSet);
-        }
-
-        return base.VisitSetElement(context);
+        return VisitLexerCharSet(context, context.LEXER_CHAR_SET());
     }
 
     public override SyntaxNode? VisitCharacterRange(ANTLRv4Parser.CharacterRangeContext context)
@@ -693,16 +677,22 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
         foreach(var delegateGrammar in context.delegateGrammar())
         {
-            var identifiers = delegateGrammar.identifier();
-            var importName = SpanAndComment(delegateGrammar, new ImportNameSyntax(GetIdentifier(identifiers[0])));
-            if (identifiers.Length == 2)
-            {
-                importName.Value = GetIdentifier(identifiers[1]);
-            }
-            importSyntax.Names.Add(importName);
+            importSyntax.Names.Add((ImportNameSyntax)VisitDelegateGrammar(delegateGrammar)!);
         }
 
         return SpanAndComment(context, importSyntax);
+    }
+
+    public override SyntaxNode? VisitDelegateGrammar(ANTLRv4Parser.DelegateGrammarContext context)
+    {
+        var identifiers = context.identifier();
+        var importName = new ImportNameSyntax(GetIdentifier(identifiers[0]));
+        if (identifiers.Length == 2)
+        {
+            importName.Value = GetIdentifier(identifiers[1]);
+        }
+
+        return SpanAndComment(context, importName);
     }
 
     public override SyntaxNode? VisitTokensSpec(ANTLRv4Parser.TokensSpecContext context)
@@ -782,17 +772,25 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
             if (token.Type == ANTLRv4Lexer.DOC_COMMENT)
             {
-                comments.Add(new CommentSyntax(token.Text, CommentKind.Doc));
+                // /** ... */
+                var text = token.Text;
+                text = text.Substring(3, text.Length - (text.EndsWith("*/") ? 5 : 3 ));
+                comments.Add(new CommentSyntax(text, CommentKind.Doc));
                 _tokenIndicesUsed.Add(token.TokenIndex);
             }
             else if (token.Type == ANTLRv4Lexer.LINE_COMMENT)
             {
-                comments.Add(new CommentSyntax(token.Text, CommentKind.Line));
+                // //
+                var text = token.Text.Substring(2);
+                comments.Add(new CommentSyntax(text, CommentKind.Line));
                 _tokenIndicesUsed.Add(token.TokenIndex);
             }
             else if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT)
             {
-                comments.Add(new CommentSyntax(token.Text, CommentKind.Block));
+                // /* ... */
+                var text = token.Text;
+                text = text.Substring(2, text.Length - (text.EndsWith("*/") ? 4 : 2));
+                comments.Add(new CommentSyntax(text, CommentKind.Block));
                 _tokenIndicesUsed.Add(token.TokenIndex);
             }
         }

@@ -17,7 +17,6 @@ public sealed class LexerCommandsSyntax : SyntaxNode
 
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        if (Items.Count == 0) return;
         builder.Append(" -> ");
         for (var i = 0; i < Items.Count; i++)
         {

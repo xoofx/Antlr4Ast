@@ -1,0 +1,22 @@
+﻿grammar TestElementOptions;
+
+rule
+  :  <test, test2, test3 = hello, test4 = 'yes'> MY_TOKEN
+  ;
+
+rule1
+  : MY_TOKEN <hello1>
+  ;
+
+rule2
+  : 'literal' <hello2>
+  ;
+
+rule3
+  : rule2 <hello3>
+  ;
+
+rule4
+  : . <hello4>
+  ;
+

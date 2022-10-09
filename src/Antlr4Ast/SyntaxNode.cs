@@ -31,7 +31,8 @@ public abstract class SyntaxNode
             {
                 foreach (var comment in CommentsBefore)
                 {
-                    builder.AppendLine(comment.Text);
+                    comment.ToText(builder, options);
+                    builder.AppendLine();
                 }
             }
         }
@@ -46,7 +47,9 @@ public abstract class SyntaxNode
             {
                 foreach (var comment in CommentsAfter)
                 {
-                    builder.Append(' ').AppendLine(comment.Text);
+                    builder.Append(' ');
+                    comment.ToText(builder, options);
+                    builder.AppendLine();
                 }
             }
         }

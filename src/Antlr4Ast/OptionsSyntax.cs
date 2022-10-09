@@ -24,6 +24,6 @@ public class OptionsSyntax : SyntaxNode
             builder.Append("; ");
         }
 
-        builder.Append(" }");
+        builder.Append("}");
     }
 }

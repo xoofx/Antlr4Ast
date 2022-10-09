@@ -3,7 +3,7 @@
 // Copyright (c) 2016-2017, Ivan Kochurkin (kvanttt@gmail.com), Positive Technologies.
 lexer grammar CSharpLexer;
 
-options { superClass = CSharpLexerBase;  }
+options { superClass = CSharpLexerBase; }
 
 channels { COMMENTS_CHANNEL, DIRECTIVE }
 

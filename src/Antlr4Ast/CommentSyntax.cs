@@ -2,6 +2,8 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
+using System.Text;
+
 namespace Antlr4Ast;
 
 public class CommentSyntax
@@ -16,8 +18,33 @@ public class CommentSyntax
 
     public CommentKind Kind { get; set; }
 
+    public void ToText(StringBuilder builder, AntlrFormattingOptions options)
+    {
+        switch (Kind)
+        {
+            case CommentKind.Doc:
+                builder.Append("/**");
+                builder.Append(Text);
+                builder.Append("*/");
+                break;
+            case CommentKind.Block:
+                builder.Append("/*");
+                builder.Append(Text);
+                builder.Append("*/");
+                break;
+            case CommentKind.Line:
+                builder.Append("//");
+                builder.Append(Text);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     public override string ToString()
     {
-        return Text;
+        var builder = new StringBuilder();
+        ToText(builder, new AntlrFormattingOptions());
+        return builder.ToString();
     }
 }

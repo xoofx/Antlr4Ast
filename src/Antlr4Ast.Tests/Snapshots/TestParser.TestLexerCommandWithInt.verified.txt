@@ -1,0 +1,6 @@
+﻿grammar TestLexerCommandWithInt;
+
+TOKEN
+  : 'a' -> hello(1), mode, mode(a)
+  ;
+

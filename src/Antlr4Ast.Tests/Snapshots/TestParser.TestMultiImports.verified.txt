@@ -1,0 +1,4 @@
+﻿grammar TestMultiImports;
+
+import a, b = b, hello = hello;
+

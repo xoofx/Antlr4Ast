@@ -1,0 +1,6 @@
+﻿grammar TestOptionWithBlock;
+
+rule
+  : ( options { helloworld = 1; string = 'hello2'; }: 'a' )
+  ;
+

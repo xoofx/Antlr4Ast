@@ -1,0 +1,12 @@
+﻿grammar TestEmptyAlternative;
+
+rule
+  : test
+  | 
+  ;
+
+TEST
+  : 'a'
+  | 
+  ;
+

@@ -1,0 +1,14 @@
+﻿grammar TestOptions;
+
+rule
+  options { preview = 'xyz'; }
+  options { hello = 'abc'; }
+  : ( options { helloworld = 1; string = 'hello2'; }: 'a' )
+  ;
+
+TOKEN
+  options { hello2 = hello3; }
+  : 'a'
+  | 'b'
+  ;
+

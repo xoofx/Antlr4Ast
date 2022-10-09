@@ -1,0 +1,7 @@
+﻿grammar TestLexerLabeled;
+
+TOKEN
+  : x='a'
+  | y+='a' y+='b'
+  ;
+

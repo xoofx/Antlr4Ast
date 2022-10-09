@@ -3,7 +3,7 @@
 // Copyright (c) 2016-2017, Ivan Kochurkin (kvanttt@gmail.com), Positive Technologies.
 parser grammar CSharpPreprocessorParser;
 
-options { tokenVocab = CSharpLexer; superClass = CSharpPreprocessorParserBase;  }
+options { tokenVocab = CSharpLexer; superClass = CSharpPreprocessorParserBase; }
 
 preprocessor_directive
   : DEFINE CONDITIONAL_SYMBOL directive_new_line_or_sharp # preprocessorDeclaration
