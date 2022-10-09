@@ -17,9 +17,6 @@ public sealed class LiteralSyntax : ElementSyntax
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
-        builder.Append(Text);
-        builder.Append(Suffix.ToText());
-        Options?.ToText(builder, options);
+        SyntaxExtensions.ToLiteral(Text, builder);
     }
 }

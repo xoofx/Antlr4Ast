@@ -976,17 +976,17 @@ stackalloc_initializer
   ;
 
 right_arrow
-  : '=' '>' // Nothing between the tokens?
+  : first='=' second='>' // Nothing between the tokens?
 
   ;
 
 right_shift
-  : '>' '>' // Nothing between the tokens?
+  : first='>' second='>' // Nothing between the tokens?
 
   ;
 
 right_shift_assignment
-  : '>' '>=' // Nothing between the tokens?
+  : first='>' second='>=' // Nothing between the tokens?
 
   ;
 

@@ -11,6 +11,5 @@ public sealed class DotSyntax : ElementSyntax
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append('.');
-        Options?.ToText(builder, options);
     }
 }

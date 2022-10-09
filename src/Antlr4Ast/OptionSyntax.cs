@@ -22,6 +22,13 @@ public class OptionSyntax : SyntaxNode
     {
         builder.Append(Name);
         builder.Append(" = ");
-        builder.Append(Value);
+        if (Value is SyntaxNode node)
+        {
+            node.ToText(builder, options);
+        }
+        else
+        {
+            builder.Append(Value);
+        }
     }
 }

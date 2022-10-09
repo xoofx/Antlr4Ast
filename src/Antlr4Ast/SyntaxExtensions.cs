@@ -21,6 +21,14 @@ public static class SyntaxExtensions
             _ => throw new ArgumentOutOfRangeException(nameof(suffix), suffix, null)
         };
 
+    public static string ToText(this LabelKind labelKind) =>
+        labelKind switch
+        {
+            LabelKind.Assign => "=",
+            LabelKind.PlusAssign => "+=",
+            _ => throw new ArgumentOutOfRangeException(nameof(labelKind), labelKind, null)
+        };
+
     public static string ToText(this GrammarKind kind) =>
         kind switch
         {
@@ -32,7 +40,6 @@ public static class SyntaxExtensions
     
     public static void ToLiteral(string literal, StringBuilder builder)
     {
-        // TODO: escape literal
         builder.Append('\'').Append(literal).Append('\'');
     }
 }

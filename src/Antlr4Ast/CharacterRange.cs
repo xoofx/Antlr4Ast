@@ -20,8 +20,6 @@ public sealed class CharacterRange : ElementSyntax
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
-
         SyntaxExtensions.ToLiteral(From, builder);
         builder.Append(" .. ");
         SyntaxExtensions.ToLiteral(To, builder);

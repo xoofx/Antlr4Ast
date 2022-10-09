@@ -262,6 +262,12 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitAtom(ANTLRv4Parser.AtomContext atom)
     {
+        //atom
+        //   : terminal
+        //   | ruleref
+        //   | notSet
+        //   | DOT elementOptions?
+        //   ;
         if (atom.terminal() is { } terminal)
         {
             if (terminal.TOKEN_REF() is { } tokenRef)
@@ -270,7 +276,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
             }
             else if (terminal.STRING_LITERAL() is { } stringLiteral)
             {
-                return SpanAndComment(terminal, new LiteralSyntax(stringLiteral.GetText()));
+                return SpanAndComment(stringLiteral, new LiteralSyntax(GetStringLiteral(stringLiteral)));
             }
         }
         else if (atom.ruleref() is { } ruleRef)
@@ -284,7 +290,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         else if (atom.DOT() != null)
         {
             var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
-            return SpanAndComment(atom, new DotSyntax() { Options = elementOptions });
+            return SpanAndComment(atom, new DotSyntax() { ElementOptions = elementOptions });
         }
 
         // Not supported
@@ -398,9 +404,19 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //    ;
         var elementOption = new ElementOptionSyntax(GetIdentifier(context.identifier()[0]))
         {
-            Value = context.identifier().Length == 2 ? GetIdentifier(context.identifier()[1]) : context.STRING_LITERAL().GetText()
+            Value = context.identifier().Length == 2 ? GetIdentifier(context.identifier()[1]) : SpanAndComment(context.STRING_LITERAL(), new LiteralSyntax(GetStringLiteral(context.STRING_LITERAL())))
         };
         return SpanAndComment(context, elementOption);
+    }
+
+    private string GetStringLiteral(ITerminalNode node)
+    {
+        var text = node.GetText();
+        if (text.StartsWith('\'') && text.EndsWith('\''))
+        {
+            text = text.Substring(1, text.Length - 2);
+        }
+        return text;
     }
 
     public override SyntaxNode? VisitLexerAtom(ANTLRv4Parser.LexerAtomContext atom)
@@ -418,7 +434,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         if (atom.DOT() != null)
         {
             var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
-            return SpanAndComment(atom, new DotSyntax() { Options = elementOptions });
+            return SpanAndComment(atom, new DotSyntax() { ElementOptions = elementOptions });
         }
 
         if (atom.notSet() is { } notSet)
@@ -482,12 +498,12 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         var elementOptions = context.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
         if (context.TOKEN_REF() is { } tokenRef)
         {
-            return SpanAndComment(context, new Token(tokenRef.GetText()) { Options = elementOptions });
+            return SpanAndComment(context, new Token(tokenRef.GetText()) { ElementOptions = elementOptions });
 
         }
         else if (context.STRING_LITERAL() is { } stringLiteral)
         {
-            return SpanAndComment(context, new LiteralSyntax(stringLiteral.GetText()) { Options = elementOptions });
+            return SpanAndComment(stringLiteral, new LiteralSyntax(GetStringLiteral(stringLiteral)) { ElementOptions = elementOptions });
         }
         else if (context.characterRange() is { } characterRange)
         {
@@ -507,8 +523,8 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         //characterRange
         //   : STRING_LITERAL RANGE STRING_LITERAL
         //   ;
-        var from = context.STRING_LITERAL()[0].GetText();
-        var to = context.STRING_LITERAL()[1].GetText();
+        var from = GetStringLiteral(context.STRING_LITERAL()[0]);
+        var to = GetStringLiteral(context.STRING_LITERAL()[1]);
         return SpanAndComment(context, new CharacterRange(from, to));
     }
 
@@ -522,9 +538,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
         if (terminal.TOKEN_REF() is { } tokenRef)
         {
-            return SpanAndComment(terminal, new Token(tokenRef.GetText()) { Options = elementOptions });
+            return SpanAndComment(terminal, new Token(tokenRef.GetText()) { ElementOptions = elementOptions });
         }
-        return SpanAndComment(terminal, new LiteralSyntax(terminal.STRING_LITERAL().GetText()) { Options = elementOptions });
+        return SpanAndComment(terminal, new LiteralSyntax(GetStringLiteral(terminal.STRING_LITERAL())) { ElementOptions = elementOptions });
     }
 
     public override SyntaxNode? VisitElement(ANTLRv4Parser.ElementContext context)
@@ -606,7 +622,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         }
         else if (optionValue.STRING_LITERAL() is { } strLiteral)
         {
-            value = strLiteral.GetText();
+            value = SpanAndComment(strLiteral, new LiteralSyntax(GetStringLiteral(strLiteral)));
         }
         else if (optionValue.INT() is { } intLiteral)
         {
@@ -679,15 +695,28 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         node.Suffix = (suffix.PLUS() != null ? SuffixKind.Plus : suffix.STAR() != null ? SuffixKind.Star : SuffixKind.Optional) + delta;
     }
 
-    private static TextSpan CreateSpan(ParserRuleContext context)
+    private static TextSpan CreateSpan(ParserRuleContext context) => CreateSpan(context.Start, context.Stop);
+
+    private static TextSpan CreateSpan(ITerminalNode terminal) => CreateSpan(terminal.Symbol, terminal.Symbol);
+    
+    private static TextSpan CreateSpan(IToken start, IToken stop)
     {
-        var start = context.Start;
-        var stop  = context.Stop;
         return new TextSpan(start.TokenSource.SourceName)
         {
             Begin = new TextLocation(start.StartIndex, start.Line, start.Column),
             End = new TextLocation(stop.StopIndex, stop.Line, stop.Column)
         };
+    }
+
+    private T SpanAndComment<T>(ITerminalNode terminal, T node, bool collectAfter = true) where T : SyntaxNode
+    {
+        node.Span = CreateSpan(terminal);
+        AddTokens(_tokens.GetHiddenTokensToLeft(terminal.Symbol.TokenIndex), node.CommentsBefore);
+        if (collectAfter)
+        {
+            AddTokens(_tokens.GetHiddenTokensToRight(terminal.Symbol.TokenIndex), node.CommentsAfter);
+        }
+        return node;
     }
 
     private T SpanAndComment<T>(ParserRuleContext context, T node, bool collectAfter = true) where T : SyntaxNode
@@ -698,33 +727,32 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         {
             AddTokens(_tokens.GetHiddenTokensToRight(context.Stop.TokenIndex), node.CommentsAfter);
         }
+        return node;
+    }
 
-        void AddTokens(IList<IToken>? tokens, List<CommentSyntax> comments)
+    void AddTokens(IList<IToken>? tokens, List<CommentSyntax> comments)
+    {
+        if (tokens is null) return;
+
+        foreach (var token in tokens)
         {
-            if (tokens is null) return;
+            if (_tokenIndicesUsed.Contains(token.TokenIndex)) continue;
 
-            foreach (var token in tokens)
+            if (token.Type == ANTLRv4Lexer.DOC_COMMENT)
             {
-                if (_tokenIndicesUsed.Contains(token.TokenIndex)) continue;
-
-                if (token.Type == ANTLRv4Lexer.DOC_COMMENT)
-                {
-                    comments.Add(new CommentSyntax(token.Text, CommentKind.Doc));
-                    _tokenIndicesUsed.Add(token.TokenIndex);
-                }
-                else if (token.Type == ANTLRv4Lexer.LINE_COMMENT)
-                {
-                    comments.Add(new CommentSyntax(token.Text, CommentKind.Line));
-                    _tokenIndicesUsed.Add(token.TokenIndex);
-                }
-                else if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT)
-                {
-                    comments.Add(new CommentSyntax(token.Text, CommentKind.Block));
-                    _tokenIndicesUsed.Add(token.TokenIndex);
-                }
+                comments.Add(new CommentSyntax(token.Text, CommentKind.Doc));
+                _tokenIndicesUsed.Add(token.TokenIndex);
+            }
+            else if (token.Type == ANTLRv4Lexer.LINE_COMMENT)
+            {
+                comments.Add(new CommentSyntax(token.Text, CommentKind.Line));
+                _tokenIndicesUsed.Add(token.TokenIndex);
+            }
+            else if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT)
+            {
+                comments.Add(new CommentSyntax(token.Text, CommentKind.Block));
+                _tokenIndicesUsed.Add(token.TokenIndex);
             }
         }
-
-        return node;
     }
 }

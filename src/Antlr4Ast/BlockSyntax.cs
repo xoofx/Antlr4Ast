@@ -10,11 +10,8 @@ public sealed class BlockSyntax : AlternativeListSyntax
 {
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
-        else if (Label != null) builder.Append(Label).Append('=');
         builder.Append("( ");
         base.ToTextImpl(builder, options);
         builder.Append(" )");
-        builder.Append(Suffix.ToText());
     }
 }

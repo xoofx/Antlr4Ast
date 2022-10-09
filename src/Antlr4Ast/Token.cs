@@ -17,10 +17,6 @@ public sealed class Token : ElementSyntax
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
-        else if (Label != null) builder.Append(Label).Append('=');
         builder.Append(Name);
-        builder.Append(Suffix.ToText());
-        Options?.ToText(builder, options);
     }
 }

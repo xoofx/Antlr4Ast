@@ -33,7 +33,9 @@ public abstract class SyntaxNode
             }
         }
 
+        ToTextImplBefore(builder, options);
         ToTextImpl(builder, options);
+        ToTextImplAfter(builder, options);
 
         if (options.DisplayComment)
         {
@@ -44,7 +46,11 @@ public abstract class SyntaxNode
         }
     }
 
+    protected virtual void ToTextImplBefore(StringBuilder builder, FormattingOptions options) {}
+
     protected abstract void ToTextImpl(StringBuilder builder, FormattingOptions options);
+
+    protected virtual void ToTextImplAfter(StringBuilder builder, FormattingOptions options) { }
 
     public sealed override string ToString()
     {

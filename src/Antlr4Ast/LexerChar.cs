@@ -17,8 +17,6 @@ public sealed class LexerChar : ElementSyntax
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
         builder.Append(Value);
-        builder.Append(Suffix.ToText());
     }
 }

@@ -17,7 +17,7 @@ public sealed class ElementOptionsSyntax : SyntaxNode
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         if (Items.Count == 0) return;
-        builder.Append('<');
+        builder.Append(" <");
         for (var i = 0; i < Items.Count; i++)
         {
             var elementOptionSyntax = Items[i];

@@ -16,11 +16,21 @@ public sealed class ElementOptionSyntax : SyntaxNode
 
     public string Name { get; set; }
 
-    public string? Value { get; set; }
+    public object? Value { get; set; }
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
         builder.Append(Name);
-        if (Value is not null) builder.Append(" = ").Append(Value.ToString(CultureInfo.InvariantCulture));
+        if (Value is null) return;
+
+        builder.Append(" = ");
+        if (Value is SyntaxNode node)
+        {
+            node.ToText(builder, options);
+        }
+        else
+        {
+            builder.Append(Value);
+        }
     }
 }

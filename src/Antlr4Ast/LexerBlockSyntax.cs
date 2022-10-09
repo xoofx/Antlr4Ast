@@ -18,7 +18,6 @@ public sealed class LexerBlockSyntax : ElementSyntax
 
     protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
     {
-        if (IsNot) builder.Append("~ ");
         builder.Append("( ");
         for (var i = 0; i < Items.Count; i++)
         {
@@ -28,6 +27,5 @@ public sealed class LexerBlockSyntax : ElementSyntax
         }
 
         builder.Append(" )");
-        builder.Append(Suffix.ToText());
     }
 }
