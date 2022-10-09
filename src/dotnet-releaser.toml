@@ -3,3 +3,5 @@ project = "Antlr4Ast.sln"
 [github]
 user = "xoofx"
 repo = "Antlr4Ast"
+[coverage]
+exclude_by_file = ["**/ANTLRv4*.cs", "**/LexerAdaptor.cs"]
