@@ -22,6 +22,17 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitGrammarSpec(ANTLRv4Parser.GrammarSpecContext context)
     {
+        //grammarSpec
+        //   : grammarDecl prequelConstruct* rules modeSpec* EOF
+        //   ;
+
+        //grammarDecl
+        //   : grammarType identifier SEMI
+        //   ;
+
+        //grammarType
+        //   : (LEXER GRAMMAR | PARSER GRAMMAR | GRAMMAR)
+        //   ;
         // Attach comments
         SpanAndComment(context, _grammar);
 
@@ -83,6 +94,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerRuleSpec(ANTLRv4Parser.LexerRuleSpecContext context)
     {
+        //lexerRuleSpec
+        //   : FRAGMENT? TOKEN_REF optionsSpec? COLON lexerRuleBlock SEMI
+        //   ;
         var ruleName = context.TOKEN_REF().GetText();
 
         var alternativeList = (AlternativeListSyntax)VisitLexerRuleBlock(context.lexerRuleBlock())!;
@@ -102,6 +116,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitParserRuleSpec(ANTLRv4Parser.ParserRuleSpecContext context)
     {
+        //parserRuleSpec
+        //   : ruleModifiers? RULE_REF argActionBlock? ruleReturns? throwsSpec? localsSpec? rulePrequel* COLON ruleBlock SEMI exceptionGroup
+        //   ;
         var ruleName = context.RULE_REF().GetText();
 
         var node = (AlternativeListSyntax)VisitRuleBlock(context.ruleBlock())!;
@@ -120,6 +137,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerAltList(ANTLRv4Parser.LexerAltListContext context)
     {
+        //lexerAltList
+        //   : lexerAlt (OR lexerAlt)*
+        //   ;
         var alternativeList = new AlternativeListSyntax();
         foreach (var lexerAlt in context.lexerAlt())
         {
@@ -134,6 +154,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerAlt(ANTLRv4Parser.LexerAltContext context)
     {
+        //lexerAlt
+        //   : lexerElements lexerCommands?
+        //   |
+        //   // explicitly allow empty alts
+        //   ;
         var alternative = new AlternativeSyntax();
         var elements = context.lexerElements().lexerElement();
         foreach (var element in elements)
@@ -159,6 +184,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerCommands(ANTLRv4Parser.LexerCommandsContext context)
     {
+        //lexerCommands
+        //   : RARROW lexerCommand (COMMA lexerCommand)*
+        //   ;
         var commands = new LexerCommandsSyntax();
         foreach (var lexerCommand in context.lexerCommand())
         {
@@ -173,6 +201,10 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerCommand(ANTLRv4Parser.LexerCommandContext context)
     {
+        //lexerCommand
+        //   : lexerCommandName LPAREN lexerCommandExpr RPAREN
+        //   | lexerCommandName
+        //   ;
         string name;
         if (context.lexerCommandName().identifier() is { } identifier)
         {
@@ -201,6 +233,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitAlternative(ANTLRv4Parser.AlternativeContext context)
     {
+        //alternative
+        //   : elementOptions? element+
+        //   |
+        //   // explicitly allow empty alts
+        //   ;
         var alternative = new AlternativeSyntax();
         if (context.elementOptions() is { } elementOptions)
         {
@@ -227,6 +264,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitRuleAltList(ANTLRv4Parser.RuleAltListContext context)
     {
+        //ruleAltList
+        //   : labeledAlt (OR labeledAlt)*
+        //   ;
         var list = new AlternativeListSyntax();
         foreach (var labeledAltContext in context.labeledAlt())
         {
@@ -241,37 +281,21 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLabeledAlt(ANTLRv4Parser.LabeledAltContext context)
     {
-        if (VisitAlternative(context.alternative()) is AlternativeSyntax node)
+        //labeledAlt
+        //   : alternative (POUND identifier)?
+        //   ;
+        var node = (AlternativeSyntax)VisitAlternative(context.alternative())!;
+        if (context.identifier() is { } identifier)
         {
-            if (context.identifier() is { } identifier)
-            {
-                node.ParserLabel = GetIdentifier(identifier);
-            }
-
-            return node;
+            node.ParserLabel = GetIdentifier(identifier);
         }
-
-        return null;
+        return node;
     }
 
     private static string GetIdentifier(ANTLRv4Parser.IdentifierContext identifier)
     {
         return identifier.TOKEN_REF()?.GetText() ?? identifier.RULE_REF().GetText();
     }
-
-    //public override SyntaxNode? VisitAltList(ANTLRv4Parser.AltListContext context)
-    //{
-    //    var list = new AlternativeListSyntax();
-    //    foreach (var alternative in context.alternative())
-    //    {
-    //        if (VisitAlternative(alternative) is AlternativeSyntax node)
-    //        {
-    //            list.Items.Add(node);
-    //        }
-    //    }
-
-    //    return SpanAndComment(context, list);
-    //}
 
     public override SyntaxNode? VisitAtom(ANTLRv4Parser.AtomContext atom)
     {
@@ -312,6 +336,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitModeSpec(ANTLRv4Parser.ModeSpecContext context)
     {
+        //modeSpec
+        //   : MODE identifier SEMI lexerRuleSpec*
+        //   ;
         var modeSpec = new LexerModeSyntax(GetIdentifier(context.identifier()));
         foreach (var lexerRuleSpec in context.lexerRuleSpec())
         {
@@ -326,6 +353,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitBlock(ANTLRv4Parser.BlockContext context)
     {
+        //block
+        //   : LPAREN (optionsSpec? ruleAction* COLON)? altList RPAREN
+        //   ;
         var block = new BlockSyntax();
         if (context.optionsSpec() is { } optionsSpec)
         {
@@ -388,6 +418,9 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerBlock(ANTLRv4Parser.LexerBlockContext context)
     {
+        //lexerBlock
+        //   : LPAREN lexerAltList RPAREN
+        //   ;
         var blockSyntax = new BlockSyntax();
         foreach (var lexerAlt in context.lexerAltList().lexerAlt())
         {
@@ -439,6 +472,13 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
     public override SyntaxNode? VisitLexerAtom(ANTLRv4Parser.LexerAtomContext atom)
     {
+        //lexerAtom
+        //   : characterRange
+        //   | terminal
+        //   | notSet
+        //   | LEXER_CHAR_SET
+        //   | DOT elementOptions?
+        //   ;
         if (atom.terminal() is { } terminal)
         {
             return VisitTerminal(terminal);
@@ -471,21 +511,13 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
     
     public override SyntaxNode? VisitNotSet(ANTLRv4Parser.NotSetContext context)
     {
-        if (context.blockSet() is { } blockSet)
-        {
-            var element = (ElementSyntax)VisitBlockSet(blockSet)!;
-            element.IsNot = true;
-            return element;
-        }
-
-        if (context.setElement() is { } setElement)
-        {
-            var element = (ElementSyntax)VisitSetElement(setElement)!;
-            element.IsNot = true;
-            return element;
-        }
-
-        return null;
+        //notSet
+        //   : NOT setElement
+        //   | NOT blockSet
+        //   ;
+        var element = context.blockSet() is { } blockSet ? (ElementSyntax)VisitBlockSet(blockSet)! : (ElementSyntax)VisitSetElement(context.setElement())!;
+        element.IsNot = true;
+        return element;
     }
 
     public override SyntaxNode? VisitBlockSet(ANTLRv4Parser.BlockSetContext context)
