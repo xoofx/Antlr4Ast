@@ -26,6 +26,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{FF8C4E
 		Shared\LexBasic.g4 = Shared\LexBasic.g4
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{048D6370-495D-4CFC-97F5-C3585871A0F0}"
+	ProjectSection(SolutionItems) = preProject
+		..\doc\readme.md = ..\doc\readme.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
