@@ -21,7 +21,6 @@ type_
 base_type
   : simple_type
   | class_type // represents types: enum, class, interface, delegate, type_parameter
-
   | VOID '*'
   | tuple_type
   ;
@@ -190,7 +189,6 @@ unary_expression
   | '--' unary_expression
   | OPEN_PARENS type_ CLOSE_PARENS unary_expression
   | AWAIT unary_expression // C# 5
-
   | '&' unary_expression
   | '*' unary_expression
   | '^' unary_expression // C# 8 ranges
@@ -691,7 +689,6 @@ common_member_declaration
   | typed_member_declaration
   | event_declaration
   | conversion_operator_declarator ( body | right_arrow throwable_expression ';' ) // C# 6
-
   | constructor_declaration
   | VOID method_declaration
   | class_definition

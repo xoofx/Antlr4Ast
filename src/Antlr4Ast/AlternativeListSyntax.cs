@@ -24,7 +24,12 @@ public class AlternativeListSyntax : ElementSyntax
             {
                 if (options.ShouldDisplayRulesAsMultiLine && this.GetType() == typeof(AlternativeListSyntax))
                 {
-                    builder.AppendLine().Append(' ');
+                    // Don't output a new line if we have already a comment
+                    if (builder[builder.Length - 1] != '\n')
+                    {
+                        builder.AppendLine();
+                    }
+                    builder.Append(' ');
                 }
                 builder.Append(" | ");
             }
