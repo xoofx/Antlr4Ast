@@ -211,7 +211,7 @@ TOKEN
     {
         var settings = new VerifySettings();
         settings.UseDirectory("Snapshots");
-        //settings.DisableDiff();
+        settings.DisableDiff();
         return settings;
     }
 }
