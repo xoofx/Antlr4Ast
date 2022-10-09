@@ -8,9 +8,12 @@ namespace Antlr4Ast;
 
 public sealed class BlockSyntax : AlternativeListSyntax
 {
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    public OptionsSyntax? Options { get; set; }
+
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");
+        Options?.ToText(builder, options);
         base.ToTextImpl(builder, options);
         builder.Append(" )");
     }

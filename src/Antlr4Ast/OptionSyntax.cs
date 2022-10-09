@@ -18,7 +18,7 @@ public class OptionSyntax : SyntaxNode
 
     public object? Value { get; set; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(Name);
         builder.Append(" = ");

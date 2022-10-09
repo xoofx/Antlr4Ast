@@ -15,7 +15,7 @@ public class ImportSyntax : SyntaxNode
 
     public List<ImportNameSyntax> Names { get; }
     
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("import ");
         for (var i = 0; i < Names.Count; i++)

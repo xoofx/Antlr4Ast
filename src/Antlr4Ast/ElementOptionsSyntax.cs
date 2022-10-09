@@ -14,7 +14,7 @@ public sealed class ElementOptionsSyntax : SyntaxNode
     }
     public List<ElementOptionSyntax> Items { get; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Items.Count == 0) return;
         builder.Append(" <");

@@ -23,9 +23,9 @@ public abstract class SyntaxNode
     public TextSpan Span { get; set; }
 
 
-    public void ToText(StringBuilder builder, FormattingOptions options)
+    public void ToText(StringBuilder builder, AntlrFormattingOptions options)
     {
-        if (options.DisplayComment)
+        if (options.MultiLineWithComments)
         {
             foreach (var comment in CommentsBefore)
             {
@@ -37,7 +37,7 @@ public abstract class SyntaxNode
         ToTextImpl(builder, options);
         ToTextImplAfter(builder, options);
 
-        if (options.DisplayComment)
+        if (options.MultiLineWithComments)
         {
             foreach (var comment in CommentsAfter)
             {
@@ -46,22 +46,21 @@ public abstract class SyntaxNode
         }
     }
 
-    protected virtual void ToTextImplBefore(StringBuilder builder, FormattingOptions options) {}
+    protected virtual void ToTextImplBefore(StringBuilder builder, AntlrFormattingOptions options) {}
 
-    protected abstract void ToTextImpl(StringBuilder builder, FormattingOptions options);
+    protected abstract void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options);
 
-    protected virtual void ToTextImplAfter(StringBuilder builder, FormattingOptions options) { }
+    protected virtual void ToTextImplAfter(StringBuilder builder, AntlrFormattingOptions options) { }
 
     public sealed override string ToString()
     {
-        return ToString(new FormattingOptions()
+        return ToString(new AntlrFormattingOptions()
         {
-            ShouldDisplayRulesAsMultiLine = false,
-            DisplayComment = false
+            MultiLineWithComments = false,
         });
     }
 
-    public string ToString(FormattingOptions options)
+    public string ToString(AntlrFormattingOptions options)
     {
         var builder = new StringBuilder();
         ToText(builder, options);

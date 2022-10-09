@@ -15,14 +15,14 @@ public class AlternativeListSyntax : ElementSyntax
     
     public List<AlternativeSyntax> Items { get; }
     
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         for (var i = 0; i < Items.Count; i++)
         {
             var item = Items[i];
             if (i > 0)
             {
-                if (options.ShouldDisplayRulesAsMultiLine && this.GetType() == typeof(AlternativeListSyntax))
+                if (options.MultiLineWithComments && this.GetType() == typeof(AlternativeListSyntax))
                 {
                     // Don't output a new line if we have already a comment
                     if (builder[builder.Length - 1] != '\n')

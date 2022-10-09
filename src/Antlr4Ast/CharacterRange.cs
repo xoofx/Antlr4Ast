@@ -18,7 +18,7 @@ public sealed class CharacterRange : ElementSyntax
 
     public string To { get; set; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         SyntaxExtensions.ToLiteral(From, builder);
         builder.Append(" .. ");

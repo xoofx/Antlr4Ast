@@ -3,7 +3,7 @@
   <Class Name="Antlr4Ast.SyntaxNode" Collapsed="true">
     <Position X="5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAEAEAAAAAAAAAAAAAAAAAQAAIAACA=</HashCode>
+      <HashCode>ACAAAAAAAAAAAAAEAEAAAAAQAAAAAAAAAAAQAAIQACA=</HashCode>
       <FileName>SyntaxNode.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -20,7 +20,7 @@
   <Class Name="Antlr4Ast.ElementSyntax" Collapsed="true">
     <Position X="13.75" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAEAAAAAAAAAAAAAAAAAAAAAAAACAIAABAAAA=</HashCode>
+      <HashCode>AAAAAAgAEAAAAAAAAAAAAAEQAAAAAAAAACAIAAAQAAA=</HashCode>
       <FileName>ElementSyntax.cs</FileName>
     </TypeIdentifier>
   </Class>

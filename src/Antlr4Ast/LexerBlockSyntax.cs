@@ -16,7 +16,7 @@ public sealed class LexerBlockSyntax : ElementSyntax
     public List<ElementSyntax> Items { get; }
 
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");
         for (var i = 0; i < Items.Count; i++)

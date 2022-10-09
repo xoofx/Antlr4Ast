@@ -11,27 +11,37 @@ public sealed class RuleSyntax : SyntaxNode
     public RuleSyntax(string name, AlternativeListSyntax alternativeList)
     {
         Name = name;
+        Options = new List<OptionsSyntax>();
         this.AlternativeList = alternativeList;
     }
 
     public string Name { get; set; }
 
     public bool IsLexer => Name.Length > 0 && char.IsUpper(Name[0]);
-    
+
+    public List<OptionsSyntax> Options { get; }
+
     public AlternativeListSyntax AlternativeList { get; set; }
 
     public bool IsFragment { get; set; }
 
-    public OptionsSyntax? Options { get; set; }
-
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (IsFragment)
         {
             builder.Append("fragment ");
         }
         builder.Append(Name);
-        if (options.ShouldDisplayRulesAsMultiLine)
+        foreach (var optionsSyntax in Options)
+        {
+            if (options.MultiLineWithComments)
+            {
+                builder.AppendLine().Append("  ");
+            }
+            optionsSyntax.ToText(builder, options);
+        }
+
+        if (options.MultiLineWithComments)
         {
             builder.AppendLine().Append("  ");
         }
@@ -39,7 +49,7 @@ public sealed class RuleSyntax : SyntaxNode
 
         AlternativeList.ToText(builder, options);
 
-        if (options.ShouldDisplayRulesAsMultiLine)
+        if (options.MultiLineWithComments)
         {
             builder.AppendLine().Append("  ");
         }

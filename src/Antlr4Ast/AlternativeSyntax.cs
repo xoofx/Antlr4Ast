@@ -21,7 +21,7 @@ public sealed class AlternativeSyntax : SyntaxNode
 
     public LexerCommandsSyntax? LexerCommands { get; set; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Options is not null)
         {

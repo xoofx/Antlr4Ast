@@ -62,9 +62,9 @@ module
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
-    private FormattingOptions GetFormattingOptions()
+    private AntlrFormattingOptions GetFormattingOptions()
     {
-        return new FormattingOptions() { ShouldDisplayRulesAsMultiLine = true, DisplayComment = true };
+        return new AntlrFormattingOptions() { MultiLineWithComments = true };
     }
 
     private VerifySettings GetVerifySettings()

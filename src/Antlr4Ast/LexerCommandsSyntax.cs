@@ -15,7 +15,7 @@ public sealed class LexerCommandsSyntax : SyntaxNode
 
     public List<LexerCommandSyntax> Items { get; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Items.Count == 0) return;
         builder.Append(" -> ");

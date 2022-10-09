@@ -15,7 +15,7 @@ public class OptionsSyntax : SyntaxNode
     
     public List<OptionSyntax> Items { get; }
     
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("options { ");
         foreach(var option in Items)

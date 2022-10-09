@@ -91,7 +91,7 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 
         if (context.optionsSpec() != null)
         {
-            lexerRule.Options = VisitOptionsSpec(context.optionsSpec()) as OptionsSyntax;
+            lexerRule.Options.Add((OptionsSyntax)VisitOptionsSpec(context.optionsSpec())!);
         }
 
         return SpanAndComment(context, lexerRule, false);
@@ -102,7 +102,17 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
         var ruleName = context.RULE_REF().GetText();
 
         var node = (AlternativeListSyntax)VisitRuleBlock(context.ruleBlock())!;
-        return SpanAndComment(context, new RuleSyntax(ruleName, node), false);
+        var rule = new RuleSyntax(ruleName, node);
+
+        foreach (var prequel in context.rulePrequel())
+        {
+            if (VisitRulePrequel(prequel) is OptionsSyntax options)
+            {
+                rule.Options.Add(options);
+            }
+        }
+
+        return SpanAndComment(context, rule, false);
     }
 
     public override SyntaxNode? VisitLexerAltList(ANTLRv4Parser.LexerAltListContext context)
@@ -314,6 +324,11 @@ internal class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
     public override SyntaxNode? VisitBlock(ANTLRv4Parser.BlockContext context)
     {
         var block = new BlockSyntax();
+        if (context.optionsSpec() is { } optionsSpec)
+        {
+            block.Options = (OptionsSyntax)VisitOptionsSpec(optionsSpec)!;
+        }
+
         foreach (var alternative in context.altList().alternative())
         {
             if (VisitAlternative(alternative) is AlternativeSyntax node)

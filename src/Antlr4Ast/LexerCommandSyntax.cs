@@ -17,7 +17,7 @@ public sealed class LexerCommandSyntax : SyntaxNode
 
     public object? Expression { get; set; }
     
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(Name);
         if (Expression != null)

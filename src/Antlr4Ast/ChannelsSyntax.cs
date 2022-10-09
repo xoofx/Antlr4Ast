@@ -15,7 +15,7 @@ public class ChannelsSyntax : SyntaxNode
 
     public List<string> Ids { get; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("channels { ");
         for (var i = 0; i < Ids.Count; i++)

@@ -15,7 +15,7 @@ public sealed class RuleRefSyntax : ElementSyntax
 
     public string Name { get; set; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(Name);
     }

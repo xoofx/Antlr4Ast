@@ -38,7 +38,7 @@ public class GrammarSyntax : SyntaxNode
 
     public List<LexerModeSyntax> LexerModes { get; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Kind != GrammarKind.Full)
         {
@@ -46,7 +46,7 @@ public class GrammarSyntax : SyntaxNode
         }
         builder.AppendLine($"grammar {Name};");
 
-        if (options.ShouldDisplayRulesAsMultiLine)
+        if (options.MultiLineWithComments)
         {
             builder.AppendLine();
         }
@@ -55,7 +55,7 @@ public class GrammarSyntax : SyntaxNode
         {
             option.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }
@@ -65,7 +65,7 @@ public class GrammarSyntax : SyntaxNode
         {
             import.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }
@@ -75,7 +75,7 @@ public class GrammarSyntax : SyntaxNode
         {
             token.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }
@@ -85,7 +85,7 @@ public class GrammarSyntax : SyntaxNode
         {
             channel.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }
@@ -95,7 +95,7 @@ public class GrammarSyntax : SyntaxNode
         {
             parserRule.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }
@@ -105,7 +105,7 @@ public class GrammarSyntax : SyntaxNode
         {
             lexerRule.ToText(builder, options);
             builder.AppendLine();
-            if (options.ShouldDisplayRulesAsMultiLine)
+            if (options.MultiLineWithComments)
             {
                 builder.AppendLine();
             }

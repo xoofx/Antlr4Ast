@@ -15,7 +15,7 @@ public sealed class LiteralSyntax : ElementSyntax
 
     public string Text { get; set; }
 
-    protected override void ToTextImpl(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         SyntaxExtensions.ToLiteral(Text, builder);
     }

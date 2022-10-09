@@ -18,13 +18,13 @@ public abstract class ElementSyntax : SyntaxNode
 
     public ElementOptionsSyntax? ElementOptions { get; set; }
 
-    protected override void ToTextImplBefore(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImplBefore(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Label != null) builder.Append(Label).Append(LabelKind.ToText());
         if (IsNot) builder.Append("~ ");
     }
     
-    protected override void ToTextImplAfter(StringBuilder builder, FormattingOptions options)
+    protected override void ToTextImplAfter(StringBuilder builder, AntlrFormattingOptions options)
     {
         ElementOptions?.ToText(builder, options);
         builder.Append(Suffix.ToText());
