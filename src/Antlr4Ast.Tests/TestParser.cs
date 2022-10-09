@@ -18,6 +18,21 @@ TOKEN_B: 'b';
 ";
         // Parse the grammar
         var grammar = Antlr4Parser.Parse(input);
+
+        //foreach (var rule in grammar.LexerRules)
+        //{
+        //    Console.WriteLine($"Lexer rule `{rule.Name}`:");
+        //    foreach (var alternative in rule.AlternativeList.Items)
+        //    {
+        //        Console.Write($" ->| ");
+        //        foreach (var element in alternative.Elements)
+        //        {
+        //            Console.WriteLine($"`element => {element}` - {element.GetType().Name}`");
+        //        }
+        //    }
+        //    Console.WriteLine();
+        //}
+
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 

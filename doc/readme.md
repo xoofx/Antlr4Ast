@@ -71,6 +71,36 @@ The AST is defined with the following main classes:
   * Lexer rules names start with a capital letter.
   * Grammar rules names must be lower case.
 
+Iterating on the AST can be done easily by navigating from the `GrammarSyntax` down the lexer or parser `RuleSyntax`, `AlternativeSyntax` and `ElementSyntax`.
+
+For example, the following code process the previous lexer rules in a specific way:
+
+```c#
+foreach (var rule in grammar.LexerRules)
+{
+    Console.WriteLine($"Lexer rule `{rule.Name}`:");
+    foreach (var alternative in rule.AlternativeList.Items)
+    {
+        Console.Write($" ->| ");
+        foreach (var element in alternative.Elements)
+        {
+            Console.WriteLine($"`element => {element}` - {element.GetType().Name}`");
+        }
+    }
+    Console.WriteLine();
+}
+```
+
+And will print the following:
+
+```
+Lexer rule `TOKEN_A`:
+ ->| `element => 'a'` - LiteralSyntax`
+
+Lexer rule `TOKEN_B`:
+ ->| `element => 'b'` - LiteralSyntax`
+```
+
 ## Accessing rules
 
 For convenience, you can find a lexer or parser rule by name with the `TryGetRule` method:
