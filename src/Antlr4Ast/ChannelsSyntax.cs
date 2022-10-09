@@ -6,15 +6,25 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// A class containing the channel ids.
+/// </summary>
 public sealed class ChannelsSyntax : SyntaxNode
 {
+    /// <summary>
+    /// Creates an instance of this object.
+    /// </summary>
     public ChannelsSyntax()
     {
         Ids = new List<string>();
     }
 
+    /// <summary>
+    /// Gets the channel ids.
+    /// </summary>
     public List<string> Ids { get; }
 
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("channels { ");

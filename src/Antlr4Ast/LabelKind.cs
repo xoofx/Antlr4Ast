@@ -4,8 +4,18 @@
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// The kind of label attached to an <see cref="ElementSyntax.Label"/>.
+/// </summary>
 public enum LabelKind
 {
+    /// <summary>
+    /// An assign label `=`.
+    /// </summary>
     Assign,
+
+    /// <summary>
+    /// An assign list label `+=`.
+    /// </summary>
     PlusAssign,
 }

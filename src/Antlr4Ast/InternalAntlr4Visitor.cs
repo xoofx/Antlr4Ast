@@ -7,6 +7,9 @@ using Antlr4.Runtime.Tree;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// Internal visitor used for creating the AST from the raw ANTLRv4 visitor.
+/// </summary>
 internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNode?>
 {
     private readonly CommonTokenStream _tokens;
@@ -311,7 +314,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         if (atom.ruleref() is { } ruleRef)
         {
             var elementOptions = ruleRef.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
-            return SpanAndComment(ruleRef, new RuleRefSyntax(ruleRef.RULE_REF().GetText()) { ElementOptions = elementOptions } );
+            return SpanAndComment(ruleRef, new RuleRef(ruleRef.RULE_REF().GetText()) { ElementOptions = elementOptions } );
         }
         if (atom.notSet() is { } notSet)
         {
@@ -536,7 +539,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         var elementOptions = context.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
         if (context.TOKEN_REF() is { } tokenRef)
         {
-            return SpanAndComment(context, new Token(tokenRef.GetText()) { ElementOptions = elementOptions });
+            return SpanAndComment(context, new TokenRef(tokenRef.GetText()) { ElementOptions = elementOptions });
 
         }
         else if (context.STRING_LITERAL() is { } stringLiteral)
@@ -571,7 +574,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
         if (terminal.TOKEN_REF() is { } tokenRef)
         {
-            return SpanAndComment(terminal, new Token(tokenRef.GetText()) { ElementOptions = elementOptions });
+            return SpanAndComment(terminal, new TokenRef(tokenRef.GetText()) { ElementOptions = elementOptions });
         }
         return SpanAndComment(terminal, new LiteralSyntax(GetStringLiteral(terminal.STRING_LITERAL())) { ElementOptions = elementOptions });
     }

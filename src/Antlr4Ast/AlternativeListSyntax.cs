@@ -6,15 +6,25 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// A list of parser and lexer alternative separated by |.
+/// </summary>
 public class AlternativeListSyntax : ElementSyntax
 {
+    /// <summary>
+    /// Creates a new instance of this object
+    /// </summary>
     public AlternativeListSyntax()
     {
         Items = new List<AlternativeSyntax>();
     }
-    
+
+    /// <summary>
+    /// Gets the alternatives.
+    /// </summary>
     public List<AlternativeSyntax> Items { get; }
-    
+
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         for (var i = 0; i < Items.Count; i++)

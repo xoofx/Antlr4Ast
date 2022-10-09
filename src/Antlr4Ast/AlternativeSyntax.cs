@@ -6,21 +6,40 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// An alternative in a <see cref="AlternativeListSyntax"/> composed of <see cref="ElementSyntax"/>.
+/// </summary>
 public sealed class AlternativeSyntax : SyntaxNode
 {
+    /// <summary>
+    /// Creates a new instance of this object
+    /// </summary>
     public AlternativeSyntax()
     {
         Elements = new List<ElementSyntax>();
     }
 
+    /// <summary>
+    /// Gets or sets the options associated to this alternative.
+    /// </summary>
     public ElementOptionsSyntax? Options { get; set; }
 
+    /// <summary>
+    /// Gets the elements.
+    /// </summary>
     public List<ElementSyntax> Elements { get; }
 
+    /// <summary>
+    /// Gets or sets the associated label (only valid for a parser rule).
+    /// </summary>
     public string? ParserLabel { get; set; }
 
+    /// <summary>
+    /// Gets or sets the associated commands (only valid for a lexer rule).
+    /// </summary>
     public LexerCommandsSyntax? LexerCommands { get; set; }
 
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Options is not null)

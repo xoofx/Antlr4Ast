@@ -6,15 +6,26 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// An element used in a lexer/parser rule that defines a literal string enclosed by single quotes 'literal'.
+/// </summary>
 public sealed class LiteralSyntax : ElementSyntax
 {
+    /// <summary>
+    /// Creates an instance of this object.
+    /// </summary>
+    /// <param name="text">The literal string without the single quotes.</param>
     public LiteralSyntax(string text)
     {
         Text = text;
     }
 
+    /// <summary>
+    /// Gets or sets the literal string without the single quotes.
+    /// </summary>
     public string Text { get; set; }
 
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         SyntaxExtensions.ToLiteral(Text, builder);

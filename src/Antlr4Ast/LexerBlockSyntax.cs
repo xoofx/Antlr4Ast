@@ -6,16 +6,26 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// An element used in a lexer rule to define an alternative list of elements ( Lexer1 | Lexer2 .... | Lexer# ).
+/// </summary>
 public sealed class LexerBlockSyntax : ElementSyntax
 {
+    /// <summary>
+    /// Creates a new instance of this object.
+    /// </summary>
     public LexerBlockSyntax()
     {
         Items = new List<ElementSyntax>();
     }
 
+    /// <summary>
+    /// Gets the list of elements.
+    /// </summary>
     public List<ElementSyntax> Items { get; }
 
 
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");

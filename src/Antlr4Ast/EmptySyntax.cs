@@ -6,8 +6,12 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// An element used in a lexer/parser rule that defines an empty rule.
+/// </summary>
 public sealed class EmptySyntax : ElementSyntax
 {
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
     }

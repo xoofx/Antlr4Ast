@@ -6,14 +6,25 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// A list of <see cref="ElementOptionSyntax"/> attached to an <see cref="ElementSyntax"/>.
+/// </summary>
 public sealed class ElementOptionsSyntax : SyntaxNode
 {
+    /// <summary>
+    /// Creates an instance of this object.
+    /// </summary>
     public ElementOptionsSyntax()
     {
         Items = new List<ElementOptionSyntax>();
     }
-    public List<ElementOptionSyntax> Items { get; }
 
+    /// <summary>
+    /// Gets the list of <see cref="ElementOptionSyntax"/>.
+    /// </summary>
+    public List<ElementOptionSyntax> Items { get; }
+    
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(" <");

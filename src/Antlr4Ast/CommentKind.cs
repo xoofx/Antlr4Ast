@@ -4,9 +4,23 @@
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// The kind of comment.
+/// </summary>
 public enum CommentKind
 {
+    /// <summary>
+    /// A multiline Javadoc style comment that starts by /** ... */.
+    /// </summary>
     Doc,
+
+    /// <summary>
+    /// A multiline block style comment that start by /* ... */.
+    /// </summary>
     Block,
+
+    /// <summary>
+    /// A single line style comment that starts by //.
+    /// </summary>
     Line,
 }

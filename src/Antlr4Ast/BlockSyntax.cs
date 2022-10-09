@@ -6,10 +6,17 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// A block of alternatives ( options? altRule | altRule2 | ... | altRule# ).
+/// </summary>
 public sealed class BlockSyntax : AlternativeListSyntax
 {
+    /// <summary>
+    /// Gets or sets the options attached inside this block. This is optional.
+    /// </summary>
     public OptionsSyntax? Options { get; set; }
 
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");

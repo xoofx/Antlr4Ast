@@ -33,7 +33,6 @@ using ParserRuleContext = Antlr4.Runtime.ParserRuleContext;
 /// <typeparam name="Result">The return type of the visit operation.</typeparam>
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "4.11.1")]
 [System.Diagnostics.DebuggerNonUserCode]
-[System.CLSCompliant(false)]
 internal partial class ANTLRv4ParserBaseVisitor<Result> : AbstractParseTreeVisitor<Result>, IANTLRv4ParserVisitor<Result> {
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ANTLRv4Parser.grammarSpec"/>.

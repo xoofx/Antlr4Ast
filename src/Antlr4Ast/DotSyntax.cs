@@ -6,8 +6,12 @@ using System.Text;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// An element used in a lexer/parser rule that defines a dot `.` rule.
+/// </summary>
 public sealed class DotSyntax : ElementSyntax
 {
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append('.');

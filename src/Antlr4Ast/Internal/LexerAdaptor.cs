@@ -29,6 +29,7 @@
 using System.Reflection;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
+// ReSharper disable InconsistentNaming
 
 namespace Antlr4Ast;
 
@@ -41,13 +42,14 @@ internal abstract class LexerAdaptor : Lexer
     readonly ICharStream stream;
 
     // Tokens are read only so I hack my way
+#pragma warning disable CS8601
     readonly FieldInfo tokenInput = typeof(CommonToken).GetField("_type", BindingFlags.NonPublic | BindingFlags.Instance);
+#pragma warning restore CS8601
 
     protected LexerAdaptor(ICharStream input)
          : base(input, Console.Out, Console.Error)
     {
         CurrentRuleType = TokenConstants.InvalidType;
-        _insideOptionsBlock = false;
         stream = input;
     }
 
@@ -55,7 +57,6 @@ internal abstract class LexerAdaptor : Lexer
          : base(input, output, errorOutput)
     {
         CurrentRuleType = TokenConstants.InvalidType;
-        _insideOptionsBlock = false;
         stream = input;
     }
 
@@ -71,9 +72,7 @@ internal abstract class LexerAdaptor : Lexer
      * The whole point of this state information is to distinguish between [..arg actions..] and [charsets]. Char sets
      * can only occur in lexical rules and arg actions cannot occur.
      */
-    private int CurrentRuleType { get; set; } = TokenConstants.InvalidType;
-
-    private bool _insideOptionsBlock;
+    private int CurrentRuleType { get; set; }
 
     protected void handleBeginArgument()
     {
@@ -175,7 +174,6 @@ internal abstract class LexerAdaptor : Lexer
     public override void Reset()
     {
         CurrentRuleType = TokenConstants.InvalidType;
-        _insideOptionsBlock = false;
         base.Reset();
     }
 }

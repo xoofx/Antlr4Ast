@@ -7,34 +7,27 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// Defines the list of token ids pre-defined in a <see cref="GrammarSyntax.Tokens"/>.
+/// An element used in a lexer/parser rule to reference another rules.
 /// </summary>
-public sealed class TokensSyntax : SyntaxNode
+public sealed class RuleRef : ElementSyntax
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    public TokensSyntax()
+    /// <param name="name">The name of the rule referenced.</param>
+    public RuleRef(string name)
     {
-        Ids = new List<string>();
+        this.Name = name;
     }
 
     /// <summary>
-    /// Gets the list of token ids.
+    /// Gets or sets the name of the rule referenced.
     /// </summary>
-    public List<string> Ids { get; }
+    public string Name { get; set; }
 
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append("tokens { ");
-        for (var i = 0; i < Ids.Count; i++)
-        {
-            var option = Ids[i];
-            if (i > 0) builder.Append(", ");
-            builder.Append(option);
-        }
-
-        builder.Append(" }");
+        builder.Append(Name);
     }
 }

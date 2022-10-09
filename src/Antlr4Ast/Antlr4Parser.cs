@@ -6,11 +6,30 @@ using Antlr4.Runtime;
 
 namespace Antlr4Ast;
 
+/// <summary>
+/// Main entry class for parsing ANTLR4/g4.
+/// </summary>
 public static class Antlr4Parser
 {
-    public static GrammarSyntax Parse(string input, string fileName = "<input>")
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 file.
+    /// </summary>
+    /// <param name="filePath">The ANTLR4/g4 file path.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static GrammarSyntax ParseFile(string filePath)
     {
-        var streamReader = new StringReader(input);
+        using var reader = new StreamReader(filePath);
+        return Parse(reader, filePath);
+    }
+
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 stream.
+    /// </summary>
+    /// <param name="streamReader">A stream reader to the ANTLR4/g4 content.</param>
+    /// <param name="fileName">The filename used for reporting errors.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static GrammarSyntax Parse(TextReader streamReader, string fileName = "<input>")
+    {
         var str = new AntlrInputStream(streamReader)
         {
             name = fileName
@@ -36,12 +55,24 @@ public static class Antlr4Parser
 
         return grammar;
     }
+
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 content.
+    /// </summary>
+    /// <param name="input">A string ANTLR4/g4 content.</param>
+    /// <param name="fileName">The filename used for reporting errors.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static GrammarSyntax Parse(string input, string fileName = "<input>")
+    {
+        return Parse(new StringReader(input), fileName);
+    }
+
     internal static TextSpan CreateSpan(IToken start, IToken stop)
     {
         return new TextSpan(start.TokenSource.SourceName)
         {
-            Begin = new TextLocation(start.StartIndex, start.Line, start.Column),
-            End = new TextLocation(stop.StopIndex, stop.Line, stop.Column)
+            Begin = new TextLocation(start.StartIndex, start.Line, start.Column + 1),
+            End = new TextLocation(stop.StopIndex, stop.Line, stop.Column + 1)
         };
     }
 
