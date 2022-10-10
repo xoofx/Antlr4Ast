@@ -7,7 +7,7 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An element used in a lexer rule that defines a character range.
+/// An element used in a lexer rule that defines a character set (e.g [a-zA-Z])
 /// </summary>
 public sealed class LexerChar : ElementSyntax
 {
@@ -21,7 +21,7 @@ public sealed class LexerChar : ElementSyntax
     }
 
     /// <summary>
-    /// Gets or sets the character range.
+    /// Gets or sets the character set.
     /// </summary>
     public string Value { get; set; }
 
