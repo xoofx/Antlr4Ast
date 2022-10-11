@@ -82,6 +82,59 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
     /// </summary>
     public List<LexerModeSyntax> LexerModes { get; }
 
+
+    /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        foreach (var option in Options)
+        {
+            yield return option;
+        }
+
+        foreach (var import in Imports)
+        {
+            yield return import;
+        }
+
+        foreach (var token in Tokens)
+        {
+            yield return token;
+        }
+
+        foreach (var channel in Channels)
+        {
+            yield return channel;
+        }
+
+        foreach (var parserRule in ParserRules)
+        {
+            yield return parserRule;
+        }
+
+        foreach (var lexerRule in LexerRules)
+        {
+            yield return lexerRule;
+
+        }
+
+        foreach (var lexerMode in LexerModes)
+        {
+            yield return lexerMode;
+        }
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
     /// <inheritdoc />
     protected override bool CanOutputComments => !HasErrors;
 

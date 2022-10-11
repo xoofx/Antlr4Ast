@@ -33,6 +33,24 @@ public sealed class CharacterRange : ElementSyntax
     public string To { get; set; }
 
     /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        if (ElementOptions is not null) yield return ElementOptions;
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         SyntaxExtensions.ToLiteral(From, builder);

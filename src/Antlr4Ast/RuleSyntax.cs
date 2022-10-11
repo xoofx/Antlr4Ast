@@ -49,6 +49,29 @@ public sealed class RuleSyntax : SyntaxNode
     public bool IsFragment { get; set; }
 
     /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        foreach (var optionsSyntax in Options)
+        {
+            yield return optionsSyntax;
+        }
+
+        yield return AlternativeList;
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (IsFragment)

@@ -40,6 +40,37 @@ public sealed class AlternativeSyntax : SyntaxNode
     public LexerCommandsSyntax? LexerCommands { get; set; }
 
     /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        if (Options is not null)
+        {
+            yield return Options;
+        }
+
+        foreach (var subNode in Elements)
+        {
+            yield return subNode;
+        }
+
+        if (LexerCommands is not null)
+        {
+            yield return LexerCommands;
+        }
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         if (Options is not null)

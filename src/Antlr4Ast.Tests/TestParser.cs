@@ -200,6 +200,111 @@ TOKEN
     [Test]
     public Task VerifyMergeGrammar()
     {
+        var parserGrammar = GetMergedGrammar();
+
+        Assert.True(parserGrammar.TryGetRule("STRING_LITERAL", out _), "Unable to get STRING_LITERAL lexer rule from merged");
+        Assert.True(parserGrammar.LexerModes.Any(x => x.Name == "LexerCharSet"), "Unable to find the merged LexerCharSet");
+        Assert.True(parserGrammar.TryGetRule("BlockComment", out _), "Unable to get BlockComment lexer rule from merged");
+
+        return Verify(parserGrammar.ToString(GetFormattingOptions()), GetVerifySettings());
+    }
+    
+    [Test]
+    public Task VerifyVisitor()
+    {
+        var parserGrammar = GetMergedGrammar();
+
+        var visitor = new TestVisitor();
+        visitor.Visit(parserGrammar);
+        var result = visitor.Builder.ToString();
+        return Verify(result, GetVerifySettings());
+    }
+    
+    [Test]
+    public Task VerifyTransform()
+    {
+        var parserGrammar = GetMergedGrammar();
+
+        var visitor = new TestTransform();
+        var pseudoNode = visitor.Visit(parserGrammar)!;
+        var builder = new StringBuilder();
+        pseudoNode.ToText(builder);
+        var result = builder.ToString();
+        return Verify(result, GetVerifySettings());
+    }
+
+    [Test]
+    public Task VerifyVisitorMixed()
+    {
+        var parserGrammar = GetMixedGrammar();
+
+        var visitor = new TestVisitor();
+        visitor.Visit(parserGrammar);
+        var result = visitor.Builder.ToString();
+        return Verify(result, GetVerifySettings());
+    }
+
+    [Test]
+    public Task VerifyTransformMixed()
+    {
+        var parserGrammar = GetMixedGrammar();
+
+        var visitor = new TestTransform();
+        var pseudoNode = visitor.Visit(parserGrammar)!;
+        var builder = new StringBuilder();
+        pseudoNode.ToText(builder);
+        var result = builder.ToString();
+        return Verify(result, GetVerifySettings());
+    }
+
+    private GrammarSyntax GetMixedGrammar()
+    {
+        var input = @"grammar MixedGrammar;
+import a, b = c, hello = world;
+rule: <test, test2, test3 = hello, test4 = 'yes'> MY_TOKEN;
+rule1: MY_TOKEN <hello1>;
+rule2: 'literal' <hello2>;
+rule3: rule2 <hello3>;
+rule4: . <hello4>;
+
+rule5
+    : test
+    |
+    ;
+TEST
+    : 'a'
+    |
+    ;
+
+rule6
+    : ~ TOKEN
+    | ~ 'a' .. 'z'
+    | ~ ('c' | 'e')
+    ;
+
+rule7 options { preview = 'xyz'; } options { hello = 'abc'; }
+    : (options { helloworld = 1; string = 'hello2'; }: 'a')
+    ;
+TOKEN options { hello2 = hello3; }
+    : 'a'
+    | 'b'
+    ;
+
+TOKEN2
+    : 'a' -> hello(1), mode, mode(a)
+    ;
+
+TOKEN3
+    : x='a'
+    | y+='a' y+='b'
+    ;
+";
+        var grammar = Antlr4Parser.Parse(input);
+        return grammar;
+    }
+
+    private GrammarSyntax GetMergedGrammar()
+    {
         var parserGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
         var lexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
         var basicLexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
@@ -209,12 +314,7 @@ TOKEN
 
         // Our parser grammar is now a full grammar
         parserGrammar.Kind = GrammarKind.Full;
-
-        Assert.True(parserGrammar.TryGetRule("STRING_LITERAL", out _), "Unable to get STRING_LITERAL lexer rule from merged");
-        Assert.True(parserGrammar.LexerModes.Any(x => x.Name == "LexerCharSet"), "Unable to find the merged LexerCharSet");
-        Assert.True(parserGrammar.TryGetRule("BlockComment", out _), "Unable to get BlockComment lexer rule from merged");
-
-        return Verify(parserGrammar.ToString(GetFormattingOptions()), GetVerifySettings());
+        return parserGrammar;
     }
 
     private AntlrFormattingOptions GetFormattingOptions()
@@ -228,5 +328,46 @@ TOKEN
         settings.UseDirectory("Snapshots");
         settings.DisableDiff();
         return settings;
+    }
+
+    private class TestVisitor : Antlr4Visitor
+    {
+        public TestVisitor()
+        {
+            Builder = new StringBuilder();
+        }
+
+        public StringBuilder Builder { get; }
+
+        public override void DefaultVisit(SyntaxNode node)
+        {
+            Builder.AppendLine($"{node.GetType().Name} - {node.Span}");
+            base.DefaultVisit(node);
+        }
+    }
+
+    private class TestTransform : Antlr4Visitor<PseudoNode>
+    {
+        public TestTransform()
+        {
+        }
+
+        public override PseudoNode? DefaultVisit(SyntaxNode node)
+        {
+            base.DefaultVisit(node);
+            return new PseudoNode(node, node.Children().Select(x => x.Accept(this)!).ToList());
+        }
+    }
+
+    private record PseudoNode(SyntaxNode Value, List<PseudoNode> Children)
+    {
+        public void ToText(StringBuilder builder)
+        {
+            builder.AppendLine($"{Value.GetType().Name} - {Value.Span}");
+            foreach (var child in Children)
+            {
+                child.ToText(builder);
+            }
+        }
     }
 }

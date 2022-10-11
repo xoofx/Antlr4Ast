@@ -23,7 +23,25 @@ public sealed class ChannelsSyntax : SyntaxNode
     /// Gets the channel ids.
     /// </summary>
     public List<string> Ids { get; }
+    
+    /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        yield break;
+    }
 
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+    
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {

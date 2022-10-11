@@ -17,6 +17,29 @@ public sealed class BlockSyntax : AlternativeListSyntax
     public OptionsSyntax? Options { get; set; }
 
     /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        foreach (var syntaxNode in base.Children())
+        {
+            yield return syntaxNode;
+        }
+
+        if (Options is not null) yield return Options;
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+    
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("( ");

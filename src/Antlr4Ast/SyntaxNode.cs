@@ -34,8 +34,26 @@ public abstract class SyntaxNode
     /// The location of this node in the source text.
     /// </summary>
     public TextSpan Span { get; set; }
+    
+    /// <summary>
+    /// Gets the children node
+    /// </summary>
+    /// <returns>All the direct <see cref="SyntaxNode"/> that this instance reference.</returns>
+    public abstract IEnumerable<SyntaxNode> Children();
 
+    /// <summary>
+    /// Accepts the following visitor.
+    /// </summary>
+    /// <param name="visitor">The visitor.</param>
+    public abstract void Accept(Antlr4Visitor visitor);
 
+    /// <summary>
+    /// Accepts the following transform visitor.
+    /// </summary>
+    /// <typeparam name="TResult">The result of the transform.</typeparam>
+    /// <param name="transform">The transform visitor.</param>
+    public abstract TResult? Accept<TResult>(Antlr4Visitor<TResult> transform);
+    
     /// <summary>
     /// Converts this node into a textual representation.
     /// </summary>

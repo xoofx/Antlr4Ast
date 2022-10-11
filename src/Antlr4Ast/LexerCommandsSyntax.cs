@@ -23,7 +23,28 @@ public sealed class LexerCommandsSyntax : SyntaxNode
     /// Gets the commands.
     /// </summary>
     public List<LexerCommandSyntax> Items { get; }
+    
+    /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        foreach (var lexerCommandSyntax in Items)
+        {
+            yield return lexerCommandSyntax;
+        }
+    }
 
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+    
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {

@@ -25,6 +25,24 @@ public sealed class OptionsSyntax : SyntaxNode
     public List<OptionSyntax> Items { get; }
 
     /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        return Items;
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
+    /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append("options { ");

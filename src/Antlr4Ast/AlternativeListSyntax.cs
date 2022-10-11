@@ -24,6 +24,30 @@ public class AlternativeListSyntax : ElementSyntax
     /// </summary>
     public List<AlternativeSyntax> Items { get; }
 
+
+    /// <inheritdoc />
+    public override IEnumerable<SyntaxNode> Children()
+    {
+        if (ElementOptions is not null) yield return ElementOptions;
+
+        foreach (var subNode in Items)
+        {
+            yield return subNode;
+        }
+    }
+
+    /// <inheritdoc />
+    public override void Accept(Antlr4Visitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    {
+        return transform.Visit(this);
+    }
+
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
