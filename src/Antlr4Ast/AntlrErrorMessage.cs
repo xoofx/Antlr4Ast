@@ -5,7 +5,7 @@
 namespace Antlr4Ast;
 
 /// <summary>
-/// A class reporting a lexer/parser error used in <see cref="GrammarSyntax.ErrorMessages"/>.
+/// A class reporting a lexer/parser error used in <see cref="Grammar.ErrorMessages"/>.
 /// </summary>
 public sealed class AntlrErrorMessage
 {

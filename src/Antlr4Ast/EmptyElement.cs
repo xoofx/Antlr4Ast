@@ -7,16 +7,10 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An element used in a lexer/parser rule that defines a dot `.` rule.
+/// An element used in a lexer/parser rule that defines an empty rule.
 /// </summary>
-public sealed class DotSyntax : ElementSyntax
+public sealed class EmptyElement : SyntaxElement
 {
-    /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
-    {
-        visitor.Visit(this);
-    }
-
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
@@ -24,7 +18,13 @@ public sealed class DotSyntax : ElementSyntax
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override void Accept(GrammarVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    /// <inheritdoc />
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -32,6 +32,5 @@ public sealed class DotSyntax : ElementSyntax
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append('.');
     }
 }

@@ -7,38 +7,37 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An element used in a lexer rule that defines a character set (e.g [a-zA-Z])
+/// Defines the list of token ids pre-defined in a <see cref="Grammar.TokenSpecs"/>.
 /// </summary>
-public sealed class LexerChar : ElementSyntax
+public sealed class TokenSpecList : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    /// <param name="value">The character range.</param>
-    public LexerChar(string value)
+    public TokenSpecList()
     {
-        Value = value;
+        Ids = new List<string>();
     }
 
     /// <summary>
-    /// Gets or sets the character set.
+    /// Gets the list of token ids.
     /// </summary>
-    public string Value { get; set; }
+    public List<string> Ids { get; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        if (ElementOptions is not null) yield return ElementOptions;
+        yield break;
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -46,6 +45,14 @@ public sealed class LexerChar : ElementSyntax
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append(Value);
+        builder.Append("tokens { ");
+        for (var i = 0; i < Ids.Count; i++)
+        {
+            var option = Ids[i];
+            if (i > 0) builder.Append(", ");
+            builder.Append(option);
+        }
+
+        builder.Append(" }");
     }
 }

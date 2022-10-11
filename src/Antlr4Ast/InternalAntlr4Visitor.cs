@@ -35,7 +35,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   : (LEXER GRAMMAR | PARSER GRAMMAR | GRAMMAR)
         //   ;
         // Attach comments
-        var grammar = new GrammarSyntax();
+        var grammar = new Grammar();
         SpanAndComment(context, grammar);
 
         // Parse GrammarDecl
@@ -57,17 +57,17 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
             var node = VisitPrequelConstruct(prequel);
             switch (node)
             {
-                case OptionsSyntax optionList:
+                case OptionSpecList optionList:
                     grammar.Options.Add(optionList);
                     break;
-                case ImportSyntax importSyntax:
+                case ImportSpec importSyntax:
                     grammar.Imports.Add(importSyntax);
                     break;
-                case ChannelsSyntax channelsSyntax:
+                case ChannelList channelsSyntax:
                     grammar.Channels.Add(channelsSyntax);
                     break;
-                case TokensSyntax tokensSyntax:
-                    grammar.Tokens.Add(tokensSyntax);
+                case TokenSpecList tokensSyntax:
+                    grammar.TokenSpecs.Add(tokensSyntax);
                     break;
             }
         }
@@ -75,7 +75,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         // Parse parser and lexer rules
         foreach (var ruleSpec in context.rules().ruleSpec())
         {
-            var ruleSyntax = (RuleSyntax)VisitRuleSpec(ruleSpec)!;
+            var ruleSyntax = (Rule)VisitRuleSpec(ruleSpec)!;
             if (ruleSyntax.IsLexer)
             {
                 grammar.LexerRules.Add(ruleSyntax);
@@ -88,7 +88,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
         foreach (var mode in context.modeSpec())
         {
-            grammar.LexerModes.Add((LexerModeSyntax)VisitModeSpec(mode)!);
+            grammar.LexerModes.Add((LexerMode)VisitModeSpec(mode)!);
         }
 
         return grammar;
@@ -101,16 +101,16 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   ;
         var ruleName = context.TOKEN_REF().GetText();
 
-        var alternativeList = (AlternativeListSyntax)VisitLexerRuleBlock(context.lexerRuleBlock())!;
+        var alternativeList = (AlternativeList)VisitLexerRuleBlock(context.lexerRuleBlock())!;
 
-        var lexerRule = new RuleSyntax(ruleName, alternativeList)
+        var lexerRule = new Rule(ruleName, alternativeList)
         {
             IsFragment = context.FRAGMENT() != null
         };
 
         if (context.optionsSpec() != null)
         {
-            lexerRule.Options.Add((OptionsSyntax)VisitOptionsSpec(context.optionsSpec())!);
+            lexerRule.Options.Add((OptionSpecList)VisitOptionsSpec(context.optionsSpec())!);
         }
 
         return SpanAndComment(context, lexerRule);
@@ -123,12 +123,12 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   ;
         var ruleName = context.RULE_REF().GetText();
 
-        var node = (AlternativeListSyntax)VisitRuleBlock(context.ruleBlock())!;
-        var rule = new RuleSyntax(ruleName, node);
+        var node = (AlternativeList)VisitRuleBlock(context.ruleBlock())!;
+        var rule = new Rule(ruleName, node);
 
         foreach (var prequel in context.rulePrequel())
         {
-            if (VisitRulePrequel(prequel) is OptionsSyntax options)
+            if (VisitRulePrequel(prequel) is OptionSpecList options)
             {
                 rule.Options.Add(options);
             }
@@ -142,10 +142,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //lexerAltList
         //   : lexerAlt (OR lexerAlt)*
         //   ;
-        var alternativeList = new AlternativeListSyntax();
+        var alternativeList = new AlternativeList();
         foreach (var lexerAlt in context.lexerAlt())
         {
-            if (VisitLexerAlt(lexerAlt) is AlternativeSyntax node)
+            if (VisitLexerAlt(lexerAlt) is Alternative node)
             {
                 alternativeList.Items.Add(node);
             }
@@ -161,11 +161,11 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   |
         //   // explicitly allow empty alts
         //   ;
-        var alternative = new AlternativeSyntax();
+        var alternative = new Alternative();
         var elements = context.lexerElements().lexerElement();
         foreach (var element in elements)
         {
-            if (VisitLexerElement(element) is ElementSyntax node)
+            if (VisitLexerElement(element) is SyntaxElement node)
             {
                 alternative.Elements.Add(node);
             }
@@ -173,12 +173,12 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
         if (context.lexerElements().lexerElement().Length == 0)
         {
-            alternative.Elements.Add(SpanAndComment(context.lexerElements(), new EmptySyntax()));
+            alternative.Elements.Add(SpanAndComment(context.lexerElements(), new EmptyElement()));
         }
 
         if (context.lexerCommands() is { } commands)
         {
-            alternative.LexerCommands = (LexerCommandsSyntax)VisitLexerCommands(commands)!;
+            alternative.LexerCommands = (LexerCommandList)VisitLexerCommands(commands)!;
         }
 
         return SpanAndComment(context, alternative);
@@ -189,10 +189,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //lexerCommands
         //   : RARROW lexerCommand (COMMA lexerCommand)*
         //   ;
-        var commands = new LexerCommandsSyntax();
+        var commands = new LexerCommandList();
         foreach (var lexerCommand in context.lexerCommand())
         {
-            if (VisitLexerCommand(lexerCommand) is LexerCommandSyntax lexerCommandSyntax)
+            if (VisitLexerCommand(lexerCommand) is LexerCommand lexerCommandSyntax)
             {
                 commands.Items.Add(lexerCommandSyntax);
             }
@@ -217,7 +217,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
             name = context.lexerCommandName().MODE().GetText();
         }
 
-        var lexerCommand = new LexerCommandSyntax(name);
+        var lexerCommand = new LexerCommand(name);
         if (context.lexerCommandExpr() is { } commandExpr)
         {
             if (commandExpr.identifier() is { } identifierExpr)
@@ -240,16 +240,16 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   |
         //   // explicitly allow empty alts
         //   ;
-        var alternative = new AlternativeSyntax();
+        var alternative = new Alternative();
         if (context.elementOptions() is { } elementOptions)
         {
-            alternative.Options = (ElementOptionsSyntax)VisitElementOptions(elementOptions)!;
+            alternative.Options = (ElementOptionList)VisitElementOptions(elementOptions)!;
         }
 
         var elements = context.element();
         foreach (var element in elements)
         {
-            if (VisitElement(element) is ElementSyntax node)
+            if (VisitElement(element) is SyntaxElement node)
             {
                 alternative.Elements.Add(node);
             }
@@ -257,7 +257,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
         if (elements.Length == 0)
         {
-            alternative.Elements.Add(SpanAndComment(context, new EmptySyntax()));
+            alternative.Elements.Add(SpanAndComment(context, new EmptyElement()));
         }
         
         return SpanAndComment(context, alternative);
@@ -269,10 +269,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //ruleAltList
         //   : labeledAlt (OR labeledAlt)*
         //   ;
-        var list = new AlternativeListSyntax();
+        var list = new AlternativeList();
         foreach (var labeledAltContext in context.labeledAlt())
         {
-            if (VisitLabeledAlt(labeledAltContext) is AlternativeSyntax node)
+            if (VisitLabeledAlt(labeledAltContext) is Alternative node)
             {
                 list.Items.Add(node);
             }
@@ -286,7 +286,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //labeledAlt
         //   : alternative (POUND identifier)?
         //   ;
-        var node = (AlternativeSyntax)VisitAlternative(context.alternative())!;
+        var node = (Alternative)VisitAlternative(context.alternative())!;
         if (context.identifier() is { } identifier)
         {
             node.ParserLabel = GetIdentifier(identifier);
@@ -313,7 +313,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         }
         if (atom.ruleref() is { } ruleRef)
         {
-            var elementOptions = ruleRef.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+            var elementOptions = ruleRef.elementOptions() is { } eltOptions ? (ElementOptionList)VisitElementOptions(eltOptions)! : null;
             return SpanAndComment(ruleRef, new RuleRef(ruleRef.RULE_REF().GetText()) { ElementOptions = elementOptions } );
         }
         if (atom.notSet() is { } notSet)
@@ -322,8 +322,8 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         }
         else
         {
-            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
-            return SpanAndComment(atom, new DotSyntax() { ElementOptions = elementOptions });
+            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionList)VisitElementOptions(eltOptions)! : null;
+            return SpanAndComment(atom, new DotElement() { ElementOptions = elementOptions });
         }
     }
 
@@ -332,10 +332,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //modeSpec
         //   : MODE identifier SEMI lexerRuleSpec*
         //   ;
-        var modeSpec = new LexerModeSyntax(GetIdentifier(context.identifier()));
+        var modeSpec = new LexerMode(GetIdentifier(context.identifier()));
         foreach (var lexerRuleSpec in context.lexerRuleSpec())
         {
-            if (VisitLexerRuleSpec(lexerRuleSpec) is RuleSyntax rule)
+            if (VisitLexerRuleSpec(lexerRuleSpec) is Rule rule)
             {
                 modeSpec.LexerRules.Add(rule);
             }
@@ -349,15 +349,15 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //block
         //   : LPAREN (optionsSpec? ruleAction* COLON)? altList RPAREN
         //   ;
-        var block = new BlockSyntax();
+        var block = new Block();
         if (context.optionsSpec() is { } optionsSpec)
         {
-            block.Options = (OptionsSyntax)VisitOptionsSpec(optionsSpec)!;
+            block.Options = (OptionSpecList)VisitOptionsSpec(optionsSpec)!;
         }
 
         foreach (var alternative in context.altList().alternative())
         {
-            if (VisitAlternative(alternative) is AlternativeSyntax node)
+            if (VisitAlternative(alternative) is Alternative node)
             {
                 block.Items.Add(node);
             }
@@ -373,22 +373,22 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //    | lexerBlock ebnfSuffix ?
         //    | actionBlock QUESTION ?
         //    ;
-        ElementSyntax? node;
+        SyntaxElement? node;
 
         if (context.labeledLexerElement() is { } labeledElement)
         {
             var identifier = labeledElement.identifier();
-            node = (ElementSyntax)(labeledElement.lexerAtom() is { } atom ? VisitLexerAtom(atom)! : VisitLexerBlock(labeledElement.lexerBlock())!);
+            node = (SyntaxElement)(labeledElement.lexerAtom() is { } atom ? VisitLexerAtom(atom)! : VisitLexerBlock(labeledElement.lexerBlock())!);
             node.Label = GetIdentifier(identifier);
             node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
         }
         else if (context.lexerBlock() is { } lexerBlock)
         {
-            node = (ElementSyntax)VisitLexerBlock(lexerBlock)!;
+            node = (SyntaxElement)VisitLexerBlock(lexerBlock)!;
         }
         else if (context.lexerAtom() is { } atom)
         {
-            node = (ElementSyntax)VisitLexerAtom(atom)!;
+            node = (SyntaxElement)VisitLexerAtom(atom)!;
         }
         else
         {
@@ -409,10 +409,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //lexerBlock
         //   : LPAREN lexerAltList RPAREN
         //   ;
-        var blockSyntax = new BlockSyntax();
+        var blockSyntax = new Block();
         foreach (var lexerAlt in context.lexerAltList().lexerAlt())
         {
-            if (VisitLexerAlt(lexerAlt) is AlternativeSyntax alt)
+            if (VisitLexerAlt(lexerAlt) is Alternative alt)
             {
                 blockSyntax.Items.Add(alt);
             }
@@ -426,10 +426,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //elementOptions
         //    : LT elementOption(COMMA elementOption)*GT
         //    ;
-        var elementOptions = new ElementOptionsSyntax();
+        var elementOptions = new ElementOptionList();
         foreach (var elementOptionContext in context.elementOption())
         {
-            elementOptions.Items.Add((ElementOptionSyntax)VisitElementOption(elementOptionContext)!);
+            elementOptions.Items.Add((ElementOption)VisitElementOption(elementOptionContext)!);
         }
 
         return SpanAndComment(context, elementOptions);
@@ -442,10 +442,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //    | identifier ASSIGN(identifier | STRING_LITERAL)
         //    ;
         var identifiers = context.identifier();
-        var elementOption = new ElementOptionSyntax(GetIdentifier(identifiers[0]));
+        var elementOption = new ElementOption(GetIdentifier(identifiers[0]));
         if (context.ASSIGN() is not null)
         {
-            elementOption.Value = identifiers.Length == 2 ? GetIdentifier(identifiers[1]) : SpanAndComment(context.STRING_LITERAL(), new LiteralSyntax(GetStringLiteral(context.STRING_LITERAL())));
+            elementOption.Value = identifiers.Length == 2 ? GetIdentifier(identifiers[1]) : SpanAndComment(context.STRING_LITERAL(), new Literal(GetStringLiteral(context.STRING_LITERAL())));
         }
 
         return SpanAndComment(context, elementOption);
@@ -482,8 +482,8 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
         if (atom.DOT() != null)
         {
-            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
-            return SpanAndComment(atom, new DotSyntax() { ElementOptions = elementOptions });
+            var elementOptions = atom.elementOptions() is { } eltOptions ? (ElementOptionList)VisitElementOptions(eltOptions)! : null;
+            return SpanAndComment(atom, new DotElement() { ElementOptions = elementOptions });
         }
 
         if (atom.notSet() is { } notSet)
@@ -495,9 +495,11 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         return VisitLexerCharSet(atom, lexerCharSet);
     }
 
-    private LexerChar VisitLexerCharSet(ParserRuleContext context, ITerminalNode node)
+    private LexerCharSet VisitLexerCharSet(ParserRuleContext context, ITerminalNode node)
     {
-        return SpanAndComment(context, new LexerChar(node.GetText()));
+        var text = node.GetText();
+        text = text.Substring(1, text.Length - 2);
+        return SpanAndComment(context, new LexerCharSet(text));
     }
     
     public override SyntaxNode? VisitNotSet(ANTLRv4Parser.NotSetContext context)
@@ -506,7 +508,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   : NOT setElement
         //   | NOT blockSet
         //   ;
-        var element = context.blockSet() is { } blockSet ? (ElementSyntax)VisitBlockSet(blockSet)! : (ElementSyntax)VisitSetElement(context.setElement())!;
+        var element = context.blockSet() is { } blockSet ? (SyntaxElement)VisitBlockSet(blockSet)! : (SyntaxElement)VisitSetElement(context.setElement())!;
         element.IsNot = true;
         return element;
     }
@@ -516,10 +518,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //blockSet
         //    : LPAREN setElement(OR setElement)*RPAREN
         //    ;
-        var blockSyntax = new LexerBlockSyntax();
+        var blockSyntax = new LexerBlock();
         foreach (var setElement in context.setElement())
         {
-            if (VisitSetElement(setElement) is ElementSyntax elementSyntax)
+            if (VisitSetElement(setElement) is SyntaxElement elementSyntax)
             {
                 blockSyntax.Items.Add(elementSyntax);
             }
@@ -536,7 +538,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   | characterRange
         //   | LEXER_CHAR_SET
         //   ;
-        var elementOptions = context.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+        var elementOptions = context.elementOptions() is { } eltOptions ? (ElementOptionList)VisitElementOptions(eltOptions)! : null;
         if (context.TOKEN_REF() is { } tokenRef)
         {
             return SpanAndComment(context, new TokenRef(tokenRef.GetText()) { ElementOptions = elementOptions });
@@ -544,7 +546,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         }
         else if (context.STRING_LITERAL() is { } stringLiteral)
         {
-            return SpanAndComment(stringLiteral, new LiteralSyntax(GetStringLiteral(stringLiteral)) { ElementOptions = elementOptions });
+            return SpanAndComment(stringLiteral, new Literal(GetStringLiteral(stringLiteral)) { ElementOptions = elementOptions });
         }
         else if (context.characterRange() is { } characterRange)
         {
@@ -561,7 +563,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   ;
         var from = GetStringLiteral(context.STRING_LITERAL()[0]);
         var to = GetStringLiteral(context.STRING_LITERAL()[1]);
-        return SpanAndComment(context, new CharacterRange(from, to));
+        return SpanAndComment(context, new CharRange(from, to));
     }
 
     public override SyntaxNode? VisitTerminal(ANTLRv4Parser.TerminalContext terminal)
@@ -570,13 +572,13 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //   : TOKEN_REF elementOptions?
         //   | STRING_LITERAL elementOptions?
         //   ;
-        var elementOptions = terminal.elementOptions() is { } eltOptions ? (ElementOptionsSyntax)VisitElementOptions(eltOptions)! : null;
+        var elementOptions = terminal.elementOptions() is { } eltOptions ? (ElementOptionList)VisitElementOptions(eltOptions)! : null;
 
         if (terminal.TOKEN_REF() is { } tokenRef)
         {
             return SpanAndComment(terminal, new TokenRef(tokenRef.GetText()) { ElementOptions = elementOptions });
         }
-        return SpanAndComment(terminal, new LiteralSyntax(GetStringLiteral(terminal.STRING_LITERAL())) { ElementOptions = elementOptions });
+        return SpanAndComment(terminal, new Literal(GetStringLiteral(terminal.STRING_LITERAL())) { ElementOptions = elementOptions });
     }
 
     public override SyntaxNode? VisitElement(ANTLRv4Parser.ElementContext context)
@@ -591,7 +593,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         if (context.labeledElement() is { } labeledElement)
         {
             var identifier = labeledElement.identifier();
-            var node = labeledElement.atom() is { } atom ? (ElementSyntax)VisitAtom(atom)! : (ElementSyntax)VisitBlock(labeledElement.block())!;
+            var node = labeledElement.atom() is { } atom ? (SyntaxElement)VisitAtom(atom)! : (SyntaxElement)VisitBlock(labeledElement.block())!;
             node.Label = GetIdentifier(identifier);
             node.LabelKind = labeledElement.ASSIGN() != null ? LabelKind.Assign : LabelKind.PlusAssign;
 
@@ -601,7 +603,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
             }
             return node;
         }
-        else if (context.ebnf() is { } ebnf && VisitBlock(ebnf.block()) is BlockSyntax blockSyntax)
+        else if (context.ebnf() is { } ebnf && VisitBlock(ebnf.block()) is Block blockSyntax)
         {
             if (ebnf.blockSuffix()?.ebnfSuffix() is { } suffix)
             {
@@ -610,7 +612,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
 
             return blockSyntax;
         }
-        else if (context.atom() is { } atom && VisitAtom(atom) is ElementSyntax atomSyntax)
+        else if (context.atom() is { } atom && VisitAtom(atom) is SyntaxElement atomSyntax)
         {
             if (context.ebnfSuffix() is { } suffix)
             {
@@ -627,10 +629,10 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
     {
         // optionsSpec
         // : OPTIONS(option SEMI) * RBRACE;
-        var optionList = new OptionsSyntax();
+        var optionList = new OptionSpecList();
         foreach (var option in context.option())
         {
-            optionList.Items.Add((OptionSyntax)VisitOption(option)!);
+            optionList.Items.Add((OptionSpec)VisitOption(option)!);
         }
 
         return SpanAndComment(context, optionList);
@@ -658,7 +660,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         }
         else if (optionValue.STRING_LITERAL() is { } strLiteral)
         {
-            value = SpanAndComment(strLiteral, new LiteralSyntax(GetStringLiteral(strLiteral)));
+            value = SpanAndComment(strLiteral, new Literal(GetStringLiteral(strLiteral)));
         }
         else if (optionValue.INT() is { } intLiteral)
         {
@@ -668,7 +670,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
             }
         }
 
-        return SpanAndComment(option, new OptionSyntax(name, value));
+        return SpanAndComment(option, new OptionSpec(name, value));
     }
 
     public override SyntaxNode? VisitDelegateGrammars(ANTLRv4Parser.DelegateGrammarsContext context)
@@ -676,11 +678,11 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //delegateGrammars
         //   : IMPORT delegateGrammar (COMMA delegateGrammar)* SEMI
         //   ;
-        var importSyntax = new ImportSyntax();
+        var importSyntax = new ImportSpec();
 
         foreach(var delegateGrammar in context.delegateGrammar())
         {
-            importSyntax.Names.Add((ImportNameSyntax)VisitDelegateGrammar(delegateGrammar)!);
+            importSyntax.Names.Add((ImportNameSpec)VisitDelegateGrammar(delegateGrammar)!);
         }
 
         return SpanAndComment(context, importSyntax);
@@ -689,7 +691,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
     public override SyntaxNode? VisitDelegateGrammar(ANTLRv4Parser.DelegateGrammarContext context)
     {
         var identifiers = context.identifier();
-        var importName = new ImportNameSyntax(GetIdentifier(identifiers[0]));
+        var importName = new ImportNameSpec(GetIdentifier(identifiers[0]));
         if (identifiers.Length == 2)
         {
             importName.Value = GetIdentifier(identifiers[1]);
@@ -706,7 +708,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //idList
         //   : identifier (COMMA identifier)* COMMA?
         //   ;
-        var tokens = new TokensSyntax();
+        var tokens = new TokenSpecList();
 
         foreach (var id in context.idList().identifier())
         {
@@ -721,7 +723,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         //channelsSpec
         //   : CHANNELS idList? RBRACE
         //   ;
-        var tokens = new ChannelsSyntax();
+        var tokens = new ChannelList();
 
         foreach (var id in context.idList().identifier())
         {
@@ -731,15 +733,15 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
         return SpanAndComment(context, tokens);
     }
     
-    private static void ApplySuffix(ANTLRv4Parser.EbnfSuffixContext suffix, ElementSyntax node)
+    private static void ApplySuffix(ANTLRv4Parser.EbnfSuffixContext suffix, SyntaxElement node)
     {
         var delta = suffix.QUESTION().Length == 2 ? 3 : 0;
         node.Suffix = (suffix.PLUS() != null ? SuffixKind.Plus : suffix.STAR() != null ? SuffixKind.Star : SuffixKind.Optional) + delta;
     }
 
-    private static TextSpan CreateSpan(ParserRuleContext context) => Antlr4Parser.CreateSpan(context.Start, context.Stop);
+    private static TextSpan CreateSpan(ParserRuleContext context) => Grammar.CreateSpan(context.Start, context.Stop);
 
-    private static TextSpan CreateSpan(ITerminalNode terminal) => Antlr4Parser.CreateSpan(terminal.Symbol, terminal.Symbol);
+    private static TextSpan CreateSpan(ITerminalNode terminal) => Grammar.CreateSpan(terminal.Symbol, terminal.Symbol);
     
     private T SpanAndComment<T>(ITerminalNode terminal, T node) where T : SyntaxNode
     {

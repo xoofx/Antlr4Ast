@@ -9,14 +9,14 @@ namespace Antlr4Ast;
 /// <summary>
 /// An element used in a lexer/parser rule that defines a range of characters 'a' .. 'b'.
 /// </summary>
-public sealed class CharacterRange : ElementSyntax
+public sealed class CharRange : SyntaxElement
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
     /// <param name="from">The start character.</param>
     /// <param name="to">The end character.</param>
-    public CharacterRange(string from, string to)
+    public CharRange(string from, string to)
     {
         From = from;
         To = to;
@@ -39,13 +39,13 @@ public sealed class CharacterRange : ElementSyntax
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

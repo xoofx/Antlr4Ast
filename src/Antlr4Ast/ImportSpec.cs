@@ -7,37 +7,40 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// Defines the list of token ids pre-defined in a <see cref="GrammarSyntax.Tokens"/>.
+/// This class defines the import statement.
 /// </summary>
-public sealed class TokensSyntax : SyntaxNode
+public sealed class ImportSpec : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    public TokensSyntax()
+    public ImportSpec()
     {
-        Ids = new List<string>();
+        Names = new List<ImportNameSpec>();
     }
 
     /// <summary>
-    /// Gets the list of token ids.
+    /// Gets the list of names.
     /// </summary>
-    public List<string> Ids { get; }
-
+    public List<ImportNameSpec> Names { get; }
+    
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        yield break;
+        foreach (var importName in Names)
+        {
+            yield return importName;
+        }
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -45,14 +48,13 @@ public sealed class TokensSyntax : SyntaxNode
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append("tokens { ");
-        for (var i = 0; i < Ids.Count; i++)
+        builder.Append("import ");
+        for (var i = 0; i < Names.Count; i++)
         {
-            var option = Ids[i];
+            var importName = Names[i];
             if (i > 0) builder.Append(", ");
-            builder.Append(option);
+            importName.ToText(builder, options);
         }
-
-        builder.Append(" }");
+        builder.Append(';');
     }
 }

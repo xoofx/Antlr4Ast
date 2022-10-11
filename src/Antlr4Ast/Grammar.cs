@@ -2,6 +2,7 @@
 // Licensed under the BSD-Clause 2 license.
 // See license.txt file in the project root for full license information.
 
+using Antlr4.Runtime;
 using System.Text;
 
 namespace Antlr4Ast;
@@ -9,22 +10,22 @@ namespace Antlr4Ast;
 /// <summary>
 /// The main entry class representing an ANTLR4/g4 grammar content.
 /// </summary>
-public sealed class GrammarSyntax : SyntaxRuleContainer
+public sealed class Grammar : SyntaxRuleContainer
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    public GrammarSyntax()
+    public Grammar()
     {
         Name = string.Empty;
         ErrorMessages = new List<AntlrErrorMessage>();
-        Options = new List<OptionsSyntax>();
-        Imports = new List<ImportSyntax>();
-        Tokens = new List<TokensSyntax>();
-        Channels = new List<ChannelsSyntax>();
-        ParserRules = new List<RuleSyntax>();
-        LexerRules = new List<RuleSyntax>();
-        LexerModes = new List<LexerModeSyntax>();
+        Options = new List<OptionSpecList>();
+        Imports = new List<ImportSpec>();
+        TokenSpecs = new List<TokenSpecList>();
+        Channels = new List<ChannelList>();
+        ParserRules = new List<Rule>();
+        LexerRules = new List<Rule>();
+        LexerModes = new List<LexerMode>();
     }
 
     /// <summary>
@@ -50,38 +51,37 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
     /// <summary>
     /// Get the list of options.
     /// </summary>
-    public List<OptionsSyntax> Options { get; }
+    public List<OptionSpecList> Options { get; }
 
     /// <summary>
     /// Get the list of imports.
     /// </summary>
-    public List<ImportSyntax> Imports { get; }
+    public List<ImportSpec> Imports { get; }
 
     /// <summary>
     /// Get the list of tokens.
     /// </summary>
-    public List<TokensSyntax> Tokens { get; }
+    public List<TokenSpecList> TokenSpecs { get; }
 
     /// <summary>
     /// The list of channels.
     /// </summary>
-    public List<ChannelsSyntax> Channels { get; }
+    public List<ChannelList> Channels { get; }
 
     /// <summary>
     /// The list of parser rules.
     /// </summary>
-    public List<RuleSyntax> ParserRules { get; }
+    public List<Rule> ParserRules { get; }
 
     /// <summary>
     /// The list of lexer rules.
     /// </summary>
-    public List<RuleSyntax> LexerRules { get; }
+    public List<Rule> LexerRules { get; }
 
     /// <summary>
     /// The list of lexer modes and associated lexer rules.
     /// </summary>
-    public List<LexerModeSyntax> LexerModes { get; }
-
+    public List<LexerMode> LexerModes { get; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -96,7 +96,7 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
             yield return import;
         }
 
-        foreach (var token in Tokens)
+        foreach (var token in TokenSpecs)
         {
             yield return token;
         }
@@ -124,15 +124,73 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
+    }
+
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 file.
+    /// </summary>
+    /// <param name="filePath">The ANTLR4/g4 file path.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static Grammar ParseFile(string filePath)
+    {
+        using var reader = new StreamReader(filePath);
+        return Parse(reader, filePath);
+    }
+
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 stream.
+    /// </summary>
+    /// <param name="streamReader">A stream reader to the ANTLR4/g4 content.</param>
+    /// <param name="fileName">The filename used for reporting errors.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static Grammar Parse(TextReader streamReader, string fileName = "<input>")
+    {
+        var str = new AntlrInputStream(streamReader)
+        {
+            name = fileName
+        };
+
+        var lexer = new ANTLRv4Lexer(str, TextWriter.Null, TextWriter.Null);
+        var tokens = new CommonTokenStream(lexer);
+        var parser = new ANTLRv4Parser(tokens, TextWriter.Null, TextWriter.Null);
+        var listener = new ErrorListener();
+        parser.AddErrorListener(listener);
+        var grammarSpec = parser.grammarSpec();
+        Grammar grammar;
+        if (listener.Messages.Count > 0)
+        {
+            grammar = new Grammar();
+            grammar.ErrorMessages.AddRange(listener.Messages);
+        }
+        else
+        {
+            var visitor = new InternalAntlr4Visitor(tokens);
+            grammar = (Grammar)visitor.VisitGrammarSpec(grammarSpec)!;
+            // Update the map after loading it.
+            grammar.UpdateRulesMap();
+        }
+
+        return grammar;
+    }
+
+    /// <summary>
+    /// Parse the specified ANTLR4/g4 content.
+    /// </summary>
+    /// <param name="input">A string ANTLR4/g4 content.</param>
+    /// <param name="fileName">The filename used for reporting errors.</param>
+    /// <returns>The parsed grammar.</returns>
+    public static Grammar Parse(string input, string fileName = "<input>")
+    {
+        return Parse(new StringReader(input), fileName);
     }
 
     /// <inheritdoc />
@@ -183,7 +241,7 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
             }
         }
 
-        foreach (var token in Tokens)
+        foreach (var token in TokenSpecs)
         {
             token.ToText(builder, options);
             builder.AppendLine();
@@ -230,14 +288,14 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
     }
 
     /// <inheritdoc />
-    public override IEnumerable<RuleSyntax> GetAllRules()
+    public override IEnumerable<Rule> GetAllRules()
     {
         foreach (var rule in LexerRules) yield return rule;
         foreach (var rule in ParserRules) yield return rule;
     }
 
     /// <inheritdoc />
-    protected override void AddRuleImpl(RuleSyntax rule)
+    protected override void AddRuleImpl(Rule rule)
     {
         if (rule.IsLexer) LexerRules.Add(rule);
         else ParserRules.Add(rule);
@@ -246,25 +304,25 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
     /// <inheritdoc />
     protected override void MergeFromImpl(SyntaxRuleContainer container)
     {
-        var grammar = (GrammarSyntax)container;
+        var grammar = (Grammar)container;
 
         // Merge tokens
-        foreach (var tokens in grammar.Tokens)
+        foreach (var tokens in grammar.TokenSpecs)
         {
-            var newTokens = new TokensSyntax
+            var newTokens = new TokenSpecList
             {
                 Span = tokens.Span
             };
             newTokens.Ids.AddRange(tokens.Ids);
             newTokens.CommentsBefore.AddRange(tokens.CommentsBefore);
             newTokens.CommentsAfter.AddRange(tokens.CommentsAfter);
-            Tokens.Add(newTokens);
+            TokenSpecs.Add(newTokens);
         }
 
         // Merge channels
         foreach (var channels in grammar.Channels)
         {
-            var newChannels = new ChannelsSyntax()
+            var newChannels = new ChannelList()
             {
                 Span = channels.Span
             };
@@ -284,7 +342,7 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
             }
             else
             {
-                var lexerMode = new LexerModeSyntax(mode.Name)
+                var lexerMode = new LexerMode(mode.Name)
                 {
                     Span = mode.Span
                 };
@@ -301,4 +359,30 @@ public sealed class GrammarSyntax : SyntaxRuleContainer
             mode.UpdateRulesMap();
         }
     }
+
+    internal static TextSpan CreateSpan(IToken start, IToken stop)
+    {
+        return new TextSpan(start.TokenSource.SourceName)
+        {
+            Begin = new TextLocation(start.StartIndex, start.Line, start.Column + 1),
+            End = new TextLocation(stop.StopIndex, stop.Line, stop.Column + 1)
+        };
+    }
+
+    private class ErrorListener : BaseErrorListener
+    {
+        public ErrorListener()
+        {
+            Messages = new List<AntlrErrorMessage>();
+        }
+
+        public List<AntlrErrorMessage> Messages { get; }
+
+
+        public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e)
+        {
+            Messages.Add(new AntlrErrorMessage(CreateSpan(offendingSymbol, offendingSymbol), msg));
+        }
+    }
+
 }

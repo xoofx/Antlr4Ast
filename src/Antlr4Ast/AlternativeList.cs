@@ -9,20 +9,20 @@ namespace Antlr4Ast;
 /// <summary>
 /// A list of parser and lexer alternative separated by |.
 /// </summary>
-public class AlternativeListSyntax : ElementSyntax
+public class AlternativeList : SyntaxElement
 {
     /// <summary>
     /// Creates a new instance of this object
     /// </summary>
-    public AlternativeListSyntax()
+    public AlternativeList()
     {
-        Items = new List<AlternativeSyntax>();
+        Items = new List<Alternative>();
     }
 
     /// <summary>
     /// Gets the alternatives.
     /// </summary>
-    public List<AlternativeSyntax> Items { get; }
+    public List<Alternative> Items { get; }
 
 
     /// <inheritdoc />
@@ -37,13 +37,13 @@ public class AlternativeListSyntax : ElementSyntax
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -56,7 +56,7 @@ public class AlternativeListSyntax : ElementSyntax
             var item = Items[i];
             if (i > 0)
             {
-                if (options.MultiLineWithComments && this.GetType() == typeof(AlternativeListSyntax))
+                if (options.MultiLineWithComments && this.GetType() == typeof(AlternativeList))
                 {
                     // Don't output a new line if we have already a comment
                     if (builder[builder.Length - 1] != '\n')

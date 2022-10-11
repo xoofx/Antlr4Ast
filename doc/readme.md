@@ -10,7 +10,7 @@ This is a small user guide about this library.
 
 ## Getting started
 
-The entry point for parsing an ANTLR4/g4 grammar is to use the `Antlr4Parser.Parse` methods:
+The entry point for parsing an ANTLR4/g4 grammar is to use the `Grammar.Parse` methods:
 
 ```c#
 var input = @"grammar MyGrammar;
@@ -23,7 +23,7 @@ TOKEN_A: 'a';
 TOKEN_B: 'b';
 ";
 // Parse the grammar
-var grammar = Antlr4Parser.Parse(input);
+var grammar = Grammar.Parse(input);
 // Print the grammar
 Console.WriteLine(
     grammar.ToString(
@@ -62,16 +62,16 @@ The AST is defined with the following main classes:
 ![Class Diagram](antlr4ast-class-diagram.jpg)
 
 * The base class for all AST nodes is `SyntaxNode` and contains the span location and the attached comments (before/after) this specific node.
-* The entry point for navigating the grammar is from the `GrammarSyntax` class.
-* Lexer and Parser rules are sharing the same model with `RuleSyntax` class.
+* The entry point for navigating the grammar is from the `Grammar` class.
+* Lexer and Parser rules are sharing the same model with `Rule` class.
   * This design is to simplify the model.
-  * The `ElementSyntax` base class contains a few specific lexer or parser properties.
+  * The `SyntaxElement` base class contains a few specific lexer or parser properties.
   * You will see a property name prefixed by `Lexer` if it applies only to a lexer context.
 * The library does not contain a validation when manipulating the AST. You need to respect ANTLR rules e.g:
   * Lexer rules names start with a capital letter.
   * Grammar rules names must be lower case.
 
-Iterating on the AST can be done easily by navigating from the `GrammarSyntax` down the lexer or parser `RuleSyntax`, `AlternativeSyntax` and `ElementSyntax`.
+Iterating on the AST can be done easily by navigating from the `Grammar` down the lexer or parser `Rule`, `Alternative` and `Element` or by using the [visitor](#using-the-visitor).
 
 For example, the following code process the previous lexer rules in a specific way:
 
@@ -95,11 +95,35 @@ And will print the following:
 
 ```
 Lexer rule `TOKEN_A`:
- ->| `element => 'a'` - LiteralSyntax`
+ ->| `element => 'a'` - Literal`
 
 Lexer rule `TOKEN_B`:
- ->| `element => 'b'` - LiteralSyntax`
+ ->| `element => 'b'` - Literal`
 ```
+
+## Using the Visitor
+
+You can inherit the `GrammarVisitor` or `GrammarVisitor<TResult>` to process an entire grammar with the visitor pattern:
+
+```c#
+class PrintVisitor : GrammarVisitor
+{
+    public PrintVisitor()
+    {
+        Builder = new StringBuilder();
+    }
+
+    public StringBuilder Builder { get; }
+
+    public override void DefaultVisit(SyntaxNode node)
+    {
+        Builder.AppendLine($"{node.GetType().Name} - {node.Span}");
+        base.DefaultVisit(node);
+    }
+}
+```
+
+You can override the various `Visit` methods to perform specific visit.
 
 ## Accessing rules
 
@@ -110,7 +134,7 @@ grammar.TryGetRule("TOKEN_A", out var tokenA);
 Console.WriteLine(tokenA);
 ```
 
-This is assuming that rules are not changed (e.g `GrammarSyntax.LexerRules`). If rules are changed/updated, you need to update the map:
+This is assuming that rules are not changed (e.g `Grammar.LexerRules`). If rules are changed/updated, you need to update the map:
 
 ```c#
 // Update maps
@@ -121,7 +145,7 @@ You don't need to update the map after parsing a grammar. This is done automatic
 
 ## Accessing Comments
 
-Comments are attached to the closest syntax node. For instance, if a rule definition has a comment in the previous line, the comment will be attached to the `RuleSyntax`.
+Comments are attached to the closest syntax node. For instance, if a rule definition has a comment in the previous line, the comment will be attached to the `Rule`.
 
 ```c#
 grammar.TryGetRule("TOKEN_A", out var tokenA);
@@ -139,9 +163,9 @@ For example:
 
 ```c#
 // Load all the ANTLR4 Parser, Lexer, and Lexer fragments
-var parserGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
-var lexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
-var basicLexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
+var parserGrammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
+var lexerGrammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
+var basicLexerGrammar = Grammar.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
 
 // Merge all them
 lexerGrammar.MergeFrom(basicLexerGrammar);

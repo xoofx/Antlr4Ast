@@ -7,23 +7,23 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An element used in a lexer rule that defines a reference to lexer token (e.g MY_TOKEN).
+/// An element used in a lexer rule that defines a character set (e.g [a-zA-Z])
 /// </summary>
-public sealed class TokenRef : SyntaxElement
+public sealed class LexerCharSet : SyntaxElement
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    /// <param name="name">The name of the referenced token.</param>
-    public TokenRef(string name)
+    /// <param name="value">The character range without the enclosing [ and ].</param>
+    public LexerCharSet(string value)
     {
-        Name = name;
+        Value = value;
     }
 
     /// <summary>
-    /// Gets or sets the name of the referenced token.
+    /// Gets or sets the character set.
     /// </summary>
-    public string Name { get; set; }
+    public string Value { get; set; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -46,6 +46,8 @@ public sealed class TokenRef : SyntaxElement
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append(Name);
+        builder.Append('[');
+        builder.Append(Value);
+        builder.Append(']');
     }
 }

@@ -7,52 +7,45 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// A class containing the channel ids.
+/// An element used in a lexer/parser rule that defines a literal string enclosed by single quotes 'literal'.
 /// </summary>
-public sealed class ChannelsSyntax : SyntaxNode
+public sealed class Literal : SyntaxElement
 {
     /// <summary>
     /// Creates an instance of this object.
     /// </summary>
-    public ChannelsSyntax()
+    /// <param name="text">The literal string without the single quotes.</param>
+    public Literal(string text)
     {
-        Ids = new List<string>();
+        Text = text;
     }
 
     /// <summary>
-    /// Gets the channel ids.
+    /// Gets or sets the literal string without the single quotes.
     /// </summary>
-    public List<string> Ids { get; }
-    
+    public string Text { get; set; }
+
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        yield break;
+        if (ElementOptions is not null) yield return ElementOptions;
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
-    
+
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append("channels { ");
-        for (var i = 0; i < Ids.Count; i++)
-        {
-            var id = Ids[i];
-            if (i > 0) builder.Append(", ");
-            builder.Append(id);
-        }
-
-        builder.Append(" }");
+        SyntaxExtensions.ToLiteral(Text, builder);
     }
 }

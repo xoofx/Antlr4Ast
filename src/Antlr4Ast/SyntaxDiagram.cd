@@ -1,255 +1,262 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Antlr4Ast.SyntaxNode" Collapsed="true">
-    <Position X="5" Y="0.5" Width="1.5" />
+    <Position X="4.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAEAEAAAAAQAAAAAAAAAAAQAAIQACA=</HashCode>
+      <HashCode>AKAAAAAAAAAAAAAEAEAEAAAQAAAAAAAAAAAQAAIQACA=</HashCode>
       <FileName>SyntaxNode.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.AlternativeSyntax" Collapsed="true">
-    <Position X="8" Y="1.75" Width="1.5" />
+  <Class Name="Antlr4Ast.Alternative" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAAAQAAAAAAQAAAAAAAAQAABAAAA=</HashCode>
-      <FileName>AlternativeSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAACAAAAAAUAAAAAAQAAAAAAAAQAABAAAA=</HashCode>
+      <FileName>Alternative.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Elements" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.ElementSyntax" Collapsed="true">
-    <Position X="10.5" Y="1.75" Width="1.5" />
+  <Class Name="Antlr4Ast.SyntaxElement" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAEAAAAAAAAAAAAAEQAAAAAAAAACAIAAAQAAA=</HashCode>
-      <FileName>ElementSyntax.cs</FileName>
+      <FileName>SyntaxElement.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.SyntaxExtensions" Collapsed="true">
-    <Position X="0.5" Y="4.75" Width="1.75" />
+    <Position X="0.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAEAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SyntaxExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.OptionSyntax" Collapsed="true">
-    <Position X="0.5" Y="2.75" Width="1.75" />
+  <Class Name="Antlr4Ast.OptionSpec" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
-      <FileName>OptionSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>OptionSpec.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.DotSyntax" Collapsed="true">
-    <Position X="11.5" Y="4.25" Width="1.5" />
+  <Class Name="Antlr4Ast.DotElement" Collapsed="true">
+    <Position X="11.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>DotSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>DotElement.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.LiteralSyntax" Collapsed="true">
-    <Position X="11.5" Y="3.25" Width="1.5" />
+  <Class Name="Antlr4Ast.Literal" Collapsed="true">
+    <Position X="11.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAA=</HashCode>
-      <FileName>LiteralSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQCAAAAAA=</HashCode>
+      <FileName>Literal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.ElementOptionSyntax" Collapsed="true">
-    <Position X="14.75" Y="1.75" Width="1.75" />
+  <Class Name="Antlr4Ast.ElementOption" Collapsed="true">
+    <Position X="14.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
-      <FileName>ElementOptionSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>ElementOption.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.LexerCommandSyntax" Collapsed="true">
-    <Position X="12.5" Y="1.75" Width="1.75" />
+  <Class Name="Antlr4Ast.LexerCommand" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAQAAAQAAAAAAA=</HashCode>
-      <FileName>LexerCommandSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAQAAAAAAAAQAAAQAAAAAAA=</HashCode>
+      <FileName>LexerCommand.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.AlternativeListSyntax" Collapsed="true">
-    <Position X="9.25" Y="3.25" Width="1.75" />
+  <Class Name="Antlr4Ast.AlternativeList" Collapsed="true">
+    <Position X="9.25" Y="3.25" Width="1.5" />
+    <AssociationLine Name="Items" Type="Antlr4Ast.Alternative" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="9.25" Y="3.438" />
+        <Point X="8.188" Y="3.438" />
+        <Point X="8.188" Y="2.441" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>AlternativeListSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>AlternativeList.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Items" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.ChannelsSyntax" Collapsed="true">
-    <Position X="3.25" Y="3.75" Width="1.5" />
+  <Class Name="Antlr4Ast.ChannelList" Collapsed="true">
+    <Position X="3" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>ChannelsSyntax.cs</FileName>
+      <HashCode>AIACAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ChannelList.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.ImportSyntax" Collapsed="true">
-    <Position X="3.25" Y="1.75" Width="1.5" />
+  <Class Name="Antlr4Ast.ImportSpec" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>ImportSyntax.cs</FileName>
+      <HashCode>AIAAgAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>ImportSpec.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Names" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.ImportNameSyntax" Collapsed="true">
-    <Position X="0.5" Y="1.75" Width="1.75" />
+  <Class Name="Antlr4Ast.ImportNameSpec" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
-      <FileName>ImportNameSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAQAAAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>ImportNameSpec.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.GrammarSyntax" Collapsed="true">
-    <Position X="6" Y="1.75" Width="1.5" />
-    <AssociationLine Name="Options" Type="Antlr4Ast.OptionsSyntax" FixedFromPoint="true" FixedToPoint="true">
+  <Class Name="Antlr4Ast.Grammar" Collapsed="true">
+    <Position X="5.75" Y="1.75" Width="1.5" />
+    <AssociationLine Name="Options" Type="Antlr4Ast.OptionSpecList" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6.125" Y="2.441" />
-        <Point X="6.125" Y="2.878" />
-        <Point X="5.833" Y="2.878" Type="JumpStart" />
-        <Point X="5.667" Y="2.878" Type="JumpEnd" />
-        <Point X="4.75" Y="2.878" />
+        <Point X="5.875" Y="2.441" />
+        <Point X="5.875" Y="2.878" />
+        <Point X="5.583" Y="2.878" Type="JumpStart" />
+        <Point X="5.417" Y="2.878" Type="JumpEnd" />
+        <Point X="4.5" Y="2.878" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="Tokens" Type="Antlr4Ast.TokensSyntax" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="6.625" Y="2.441" />
-        <Point X="6.625" Y="5.096" />
-        <Point X="5.833" Y="5.096" Type="JumpStart" />
-        <Point X="5.667" Y="5.096" Type="JumpEnd" />
-        <Point X="4.75" Y="5.096" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="Channels" Type="Antlr4Ast.ChannelsSyntax" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="TokenSpecs" Type="Antlr4Ast.TokenSpecList" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="6.375" Y="2.441" />
-        <Point X="6.375" Y="4.096" />
-        <Point X="5.833" Y="4.096" Type="JumpStart" />
-        <Point X="5.667" Y="4.096" Type="JumpEnd" />
-        <Point X="4.75" Y="4.096" />
+        <Point X="6.375" Y="5.096" />
+        <Point X="5.583" Y="5.096" Type="JumpStart" />
+        <Point X="5.417" Y="5.096" Type="JumpEnd" />
+        <Point X="4.5" Y="5.096" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="ParserRules" Type="Antlr4Ast.RuleSyntax" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Channels" Type="Antlr4Ast.ChannelList" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="7.5" Y="2.188" />
-        <Point X="7.74" Y="2.188" />
-        <Point X="7.74" Y="8.562" />
-        <Point X="6.5" Y="8.562" />
+        <Point X="6.125" Y="2.441" />
+        <Point X="6.125" Y="4.096" />
+        <Point X="5.583" Y="4.096" Type="JumpStart" />
+        <Point X="5.417" Y="4.096" Type="JumpEnd" />
+        <Point X="4.5" Y="4.096" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="LexerRules" Type="Antlr4Ast.RuleSyntax" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="ParserRules" Type="Antlr4Ast.Rule" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="7.188" Y="2.441" />
-        <Point X="7.188" Y="8.142" />
-        <Point X="6.5" Y="8.142" />
+        <Point X="7.25" Y="2.188" />
+        <Point X="7.49" Y="2.188" />
+        <Point X="7.49" Y="8.562" />
+        <Point X="6.25" Y="8.562" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="LexerModes" Type="Antlr4Ast.LexerModeSyntax" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="LexerRules" Type="Antlr4Ast.Rule" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6.875" Y="2.441" />
-        <Point X="6.875" Y="7.096" />
-        <Point X="5.833" Y="7.096" Type="JumpStart" />
-        <Point X="5.667" Y="7.096" Type="JumpEnd" />
-        <Point X="4.75" Y="7.096" />
+        <Point X="6.938" Y="2.441" />
+        <Point X="6.938" Y="8.142" />
+        <Point X="6.25" Y="8.142" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="LexerModes" Type="Antlr4Ast.LexerMode" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.625" Y="2.441" />
+        <Point X="6.625" Y="7.096" />
+        <Point X="5.583" Y="7.096" Type="JumpStart" />
+        <Point X="5.417" Y="7.096" Type="JumpEnd" />
+        <Point X="4.5" Y="7.096" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAEACABAAAAAABAEAAQQAAAAAABJQAAQCABBEAA=</HashCode>
-      <FileName>GrammarSyntax.cs</FileName>
+      <HashCode>AIAgAIEACABAAAAAABAFAAQQAAAQAABJQAAQCABAEAA=</HashCode>
+      <FileName>Grammar.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Options" />
       <Property Name="Imports" />
-      <Property Name="Tokens" />
+      <Property Name="TokenSpecs" />
       <Property Name="Channels" />
       <Property Name="ParserRules" />
       <Property Name="LexerRules" />
       <Property Name="LexerModes" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.OptionsSyntax" Collapsed="true">
-    <Position X="3.25" Y="2.75" Width="1.5" />
+  <Class Name="Antlr4Ast.OptionSpecList" Collapsed="true">
+    <Position X="3" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>OptionsSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>OptionSpecList.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Items" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.RuleSyntax" Collapsed="true">
-    <Position X="5" Y="8" Width="1.5" />
-    <AssociationLine Name="AlternativeList" Type="Antlr4Ast.AlternativeListSyntax" ManuallyRouted="true">
+  <Class Name="Antlr4Ast.Rule" Collapsed="true">
+    <Position X="4.75" Y="8" Width="1.5" />
+    <AssociationLine Name="AlternativeList" Type="Antlr4Ast.AlternativeList" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.75" Y="8.691" />
-        <Point X="5.75" Y="9.094" />
-        <Point X="8.875" Y="9.094" />
-        <Point X="8.875" Y="3.423" />
-        <Point X="9.25" Y="3.423" />
+        <Point X="5.5" Y="8.691" />
+        <Point X="5.5" Y="9.094" />
+        <Point X="8.625" Y="9.094" />
+        <Point X="8.625" Y="3.813" />
+        <Point X="9.25" Y="3.813" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAACAAAAAAAQAAAAAAAAAAAAQABBAAAA=</HashCode>
-      <FileName>RuleSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAACAACAAAAEAAQAAAAAAAAAAAAQABBAAAA=</HashCode>
+      <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="AlternativeList" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Antlr4Ast.TokensSyntax" Collapsed="true">
-    <Position X="3.25" Y="4.75" Width="1.5" />
+  <Class Name="Antlr4Ast.TokenSpecList" Collapsed="true">
+    <Position X="3" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>TokensSyntax.cs</FileName>
+      <HashCode>AIACAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>TokenSpecList.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.CharacterRange" Collapsed="true">
-    <Position X="13.25" Y="4.25" Width="1.5" />
+  <Class Name="Antlr4Ast.CharRange" Collapsed="true">
+    <Position X="13" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>CharacterRange.cs</FileName>
+      <HashCode>AoAAAAAAAAAAAAAAAAAEAAAAAAAIAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>CharRange.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.EmptySyntax" Collapsed="true">
-    <Position X="9.5" Y="5.25" Width="1.5" />
+  <Class Name="Antlr4Ast.EmptyElement" Collapsed="true">
+    <Position X="9.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>EmptySyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>EmptyElement.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.LexerBlockSyntax" Collapsed="true">
-    <Position X="13.25" Y="3.25" Width="1.5" />
+  <Class Name="Antlr4Ast.LexerBlock" Collapsed="true">
+    <Position X="13" Y="3.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
-      <FileName>LexerBlockSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAACAAAAAAEAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>LexerBlock.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.LexerChar" Collapsed="true">
-    <Position X="11.5" Y="5.25" Width="1.5" />
+  <Class Name="Antlr4Ast.LexerCharSet" Collapsed="true">
+    <Position X="11.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAAAA=</HashCode>
-      <FileName>LexerChar.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>LexerCharSet.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Antlr4Ast.LexerModeSyntax" Collapsed="true">
-    <Position X="3" Y="6.75" Width="1.75" />
+  <Class Name="Antlr4Ast.LexerMode" Collapsed="true">
+    <Position X="3" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAEAAAAAAAAAAAAAAAQAAAAAAAABQAAQAAAAAAA=</HashCode>
-      <FileName>LexerModeSyntax.cs</FileName>
+      <HashCode>AIAAAAEAAAAAAAAAAAAEAAQAAAAAAAABQAAQAAAAAAA=</HashCode>
+      <FileName>LexerMode.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="LexerRules" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="Antlr4Ast.BlockSyntax" Collapsed="true">
-    <Position X="9.25" Y="4.25" Width="1.75" />
+  <Class Name="Antlr4Ast.Block" Collapsed="true">
+    <Position X="9.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAABAAAA=</HashCode>
-      <FileName>BlockSyntax.cs</FileName>
+      <HashCode>AIAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAQAABAAAA=</HashCode>
+      <FileName>Block.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Antlr4Ast.SyntaxRuleContainer" Collapsed="true">
-    <Position X="3" Y="5.75" Width="1.75" />
+    <Position X="3" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAgCAAIAAAAAAAAAAAAAAAARQAAACAAAAAA=</HashCode>
       <FileName>SyntaxRuleContainer.cs</FileName>

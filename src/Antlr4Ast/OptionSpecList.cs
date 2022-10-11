@@ -7,38 +7,37 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An element used in a lexer/parser rule that defines a literal string enclosed by single quotes 'literal'.
+/// Defines attached options (to a <see cref="Grammar.Options"/>, <see cref="Rule.Options"/> or a <see cref="Block.Options"/>).
 /// </summary>
-public sealed class LiteralSyntax : ElementSyntax
+public sealed class OptionSpecList : SyntaxNode
 {
     /// <summary>
     /// Creates an instance of this object.
     /// </summary>
-    /// <param name="text">The literal string without the single quotes.</param>
-    public LiteralSyntax(string text)
+    public OptionSpecList()
     {
-        Text = text;
+        Items = new List<OptionSpec>();
     }
 
     /// <summary>
-    /// Gets or sets the literal string without the single quotes.
+    /// Gets the list of options.
     /// </summary>
-    public string Text { get; set; }
+    public List<OptionSpec> Items { get; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        if (ElementOptions is not null) yield return ElementOptions;
+        return Items;
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -46,6 +45,13 @@ public sealed class LiteralSyntax : ElementSyntax
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        SyntaxExtensions.ToLiteral(Text, builder);
+        builder.Append("options { ");
+        foreach(var option in Items)
+        {
+            option.ToText(builder, options);
+            builder.Append("; ");
+        }
+
+        builder.Append("}");
     }
 }

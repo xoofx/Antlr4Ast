@@ -5,7 +5,7 @@
 namespace Antlr4Ast;
 
 /// <summary>
-/// The kind of label attached to an <see cref="ElementSyntax.Label"/>.
+/// The kind of label attached to an <see cref="SyntaxElement.Label"/>.
 /// </summary>
 public enum LabelKind
 {

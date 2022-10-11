@@ -9,20 +9,20 @@ namespace Antlr4Ast;
 /// <summary>
 /// An element used in a lexer rule to define an alternative list of elements ( Lexer1 | Lexer2 .... | Lexer# ).
 /// </summary>
-public sealed class LexerBlockSyntax : ElementSyntax
+public sealed class LexerBlock : SyntaxElement
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    public LexerBlockSyntax()
+    public LexerBlock()
     {
-        Items = new List<ElementSyntax>();
+        Items = new List<SyntaxElement>();
     }
 
     /// <summary>
     /// Gets the list of elements.
     /// </summary>
-    public List<ElementSyntax> Items { get; }
+    public List<SyntaxElement> Items { get; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -36,13 +36,13 @@ public sealed class LexerBlockSyntax : ElementSyntax
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

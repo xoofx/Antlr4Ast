@@ -7,27 +7,27 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An alternative in a <see cref="AlternativeListSyntax"/> composed of <see cref="ElementSyntax"/>.
+/// An alternative in a <see cref="AlternativeList"/> composed of <see cref="SyntaxElement"/>.
 /// </summary>
-public sealed class AlternativeSyntax : SyntaxNode
+public sealed class Alternative : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object
     /// </summary>
-    public AlternativeSyntax()
+    public Alternative()
     {
-        Elements = new List<ElementSyntax>();
+        Elements = new List<SyntaxElement>();
     }
 
     /// <summary>
     /// Gets or sets the options associated to this alternative.
     /// </summary>
-    public ElementOptionsSyntax? Options { get; set; }
+    public ElementOptionList? Options { get; set; }
 
     /// <summary>
     /// Gets the elements.
     /// </summary>
-    public List<ElementSyntax> Elements { get; }
+    public List<SyntaxElement> Elements { get; }
 
     /// <summary>
     /// Gets or sets the associated label (only valid for a parser rule).
@@ -37,7 +37,7 @@ public sealed class AlternativeSyntax : SyntaxNode
     /// <summary>
     /// Gets or sets the associated commands (only valid for a lexer rule).
     /// </summary>
-    public LexerCommandsSyntax? LexerCommands { get; set; }
+    public LexerCommandList? LexerCommands { get; set; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -59,13 +59,13 @@ public sealed class AlternativeSyntax : SyntaxNode
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

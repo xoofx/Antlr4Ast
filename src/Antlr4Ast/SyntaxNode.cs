@@ -45,14 +45,14 @@ public abstract class SyntaxNode
     /// Accepts the following visitor.
     /// </summary>
     /// <param name="visitor">The visitor.</param>
-    public abstract void Accept(Antlr4Visitor visitor);
+    public abstract void Accept(GrammarVisitor visitor);
 
     /// <summary>
     /// Accepts the following transform visitor.
     /// </summary>
     /// <typeparam name="TResult">The result of the transform.</typeparam>
     /// <param name="transform">The transform visitor.</param>
-    public abstract TResult? Accept<TResult>(Antlr4Visitor<TResult> transform);
+    public abstract TResult? Accept<TResult>(GrammarVisitor<TResult> transform);
     
     /// <summary>
     /// Converts this node into a textual representation.

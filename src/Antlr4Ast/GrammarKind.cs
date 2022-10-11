@@ -5,7 +5,7 @@
 namespace Antlr4Ast;
 
 /// <summary>
-/// The kind of <see cref="GrammarSyntax"/>.
+/// The kind of <see cref="Grammar"/>.
 /// </summary>
 public enum GrammarKind
 {

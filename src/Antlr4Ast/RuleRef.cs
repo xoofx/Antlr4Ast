@@ -9,7 +9,7 @@ namespace Antlr4Ast;
 /// <summary>
 /// An element used in a lexer/parser rule to reference another rules.
 /// </summary>
-public sealed class RuleRef : ElementSyntax
+public sealed class RuleRef : SyntaxElement
 {
     /// <summary>
     /// Creates a new instance of this object.
@@ -32,13 +32,13 @@ public sealed class RuleRef : ElementSyntax
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

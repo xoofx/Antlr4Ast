@@ -5,7 +5,7 @@
 namespace Antlr4Ast;
 
 /// <summary>
-/// The suffix of a <see cref="ElementSyntax"/> used in defining an <see cref="AlternativeSyntax"/> for a lexer/parser rule.
+/// The suffix of a <see cref="SyntaxElement"/> used in defining an <see cref="Alternative"/> for a lexer/parser rule.
 /// </summary>
 public enum SuffixKind
 {

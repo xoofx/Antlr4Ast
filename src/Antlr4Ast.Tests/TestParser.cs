@@ -17,7 +17,7 @@ TOKEN_A: 'a';
 TOKEN_B: 'b';
 ";
         // Parse the grammar
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
 
         //foreach (var rule in grammar.LexerRules)
         //{
@@ -41,7 +41,7 @@ TOKEN_B: 'b';
     {
         //           01234567890123456789 0123456789
         var input = "grammar HelloWorld;\nhello +\n";
-        var grammar = Antlr4Parser.Parse(input, "/this/file.g4");
+        var grammar = Grammar.Parse(input, "/this/file.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -55,7 +55,7 @@ rule2: 'literal' <hello2>;
 rule3: rule2 <hello3>;
 rule4: . <hello4>;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -72,7 +72,7 @@ TEST
     |
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -85,7 +85,7 @@ rule
     | ~ 'a' .. 'z'
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -101,7 +101,7 @@ TOKEN options { hello2 = hello3; }
     | 'b'
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -113,7 +113,7 @@ TOKEN
     : 'a' -> hello(1), mode, mode(a)
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -123,7 +123,7 @@ TOKEN
         var input = @"grammar TestMultiImports;
 import a, b = c, hello = world;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -137,14 +137,14 @@ TOKEN
     | y+='a' y+='b'
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
     [Test]
     public Task VerifyLexBasicFileSpan()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
         var builder = new StringBuilder();
         foreach (var rule in grammar.LexerRules)
         {
@@ -158,42 +158,42 @@ TOKEN
     [Test]
     public Task VerifyParserFile()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
     
     [Test]
     public Task VerifyLexerFile()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
     
     [Test]
     public Task VerifyLexBasicFile()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
     [Test]
     public Task VerifyCSharpLexer()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpLexer.g4"), @"CSharpLexer.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"Grammars/CSharpLexer.g4"), @"CSharpLexer.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
     [Test]
     public Task VerifyCSharpParser()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpParser.g4"), @"CSharpParser.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"Grammars/CSharpParser.g4"), @"CSharpParser.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
     [Test]
     public Task VerifyCSharpPreprocessorParser()
     {
-        var grammar = Antlr4Parser.Parse(File.ReadAllText(@"Grammars/CSharpPreprocessorParser.g4"), @"CSharpPreprocessorParser.g4");
+        var grammar = Grammar.Parse(File.ReadAllText(@"Grammars/CSharpPreprocessorParser.g4"), @"CSharpPreprocessorParser.g4");
         return Verify(grammar.ToString(GetFormattingOptions()), GetVerifySettings());
     }
 
@@ -257,7 +257,7 @@ TOKEN
         return Verify(result, GetVerifySettings());
     }
 
-    private GrammarSyntax GetMixedGrammar()
+    private Grammar GetMixedGrammar()
     {
         var input = @"grammar MixedGrammar;
 import a, b = c, hello = world;
@@ -299,15 +299,15 @@ TOKEN3
     | y+='a' y+='b'
     ;
 ";
-        var grammar = Antlr4Parser.Parse(input);
+        var grammar = Grammar.Parse(input);
         return grammar;
     }
 
-    private GrammarSyntax GetMergedGrammar()
+    private Grammar GetMergedGrammar()
     {
-        var parserGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
-        var lexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
-        var basicLexerGrammar = Antlr4Parser.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
+        var parserGrammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Parser.g4"), @"ANTLRv4Parser.g4");
+        var lexerGrammar = Grammar.Parse(File.ReadAllText(@"ANTLRv4Lexer.g4"), @"ANTLRv4Lexer.g4");
+        var basicLexerGrammar = Grammar.Parse(File.ReadAllText(@"LexBasic.g4"), @"LexBasic.g4");
 
         lexerGrammar.MergeFrom(basicLexerGrammar);
         parserGrammar.MergeFrom(lexerGrammar);
@@ -330,7 +330,7 @@ TOKEN3
         return settings;
     }
 
-    private class TestVisitor : Antlr4Visitor
+    private class TestVisitor : GrammarVisitor
     {
         public TestVisitor()
         {
@@ -346,7 +346,7 @@ TOKEN3
         }
     }
 
-    private class TestTransform : Antlr4Visitor<PseudoNode>
+    private class TestTransform : GrammarVisitor<PseudoNode>
     {
         public TestTransform()
         {

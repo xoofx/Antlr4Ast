@@ -9,17 +9,17 @@ namespace Antlr4Ast;
 /// <summary>
 /// Defines a lexer or parser rules (e.g AB_TOKEN: 'a' | 'b'; or ab_expr: AB_TOKEN '+' AB_TOKEN;).
 /// </summary>
-public sealed class RuleSyntax : SyntaxNode
+public sealed class Rule : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
     /// <param name="name">The name of the rule (e.g AB_TOKEN or ab_expr).Lexer rules must start with a capital letter.</param>
     /// <param name="alternativeList"></param>
-    public RuleSyntax(string name, AlternativeListSyntax alternativeList)
+    public Rule(string name, AlternativeList alternativeList)
     {
         Name = name;
-        Options = new List<OptionsSyntax>();
+        Options = new List<OptionSpecList>();
         this.AlternativeList = alternativeList;
     }
 
@@ -36,12 +36,12 @@ public sealed class RuleSyntax : SyntaxNode
     /// <summary>
     /// Gets the list of associated options.
     /// </summary>
-    public List<OptionsSyntax> Options { get; }
+    public List<OptionSpecList> Options { get; }
 
     /// <summary>
     /// Gets the list of alternatives.
     /// </summary>
-    public AlternativeListSyntax AlternativeList { get; set; }
+    public AlternativeList AlternativeList { get; set; }
 
     /// <summary>
     /// Gets or sets a boolean indicating that this rule is a lexer fragment.
@@ -60,13 +60,13 @@ public sealed class RuleSyntax : SyntaxNode
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

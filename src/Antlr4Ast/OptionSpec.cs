@@ -7,17 +7,19 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An attached option for an <see cref="ElementSyntax"/>.
+/// An option used in a an <see cref="OptionSpecList"/>.
 /// </summary>
-public sealed class ElementOptionSyntax : SyntaxNode
+public sealed class OptionSpec : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
     /// <param name="name">The name of the option.</param>
-    public ElementOptionSyntax(string name)
+    /// <param name="value">The value associated to this name. Might be null, or an identifier or an integer.</param>
+    public OptionSpec(string name, object? value)
     {
         Name = name;
+        Value = value;
     }
 
     /// <summary>
@@ -26,7 +28,7 @@ public sealed class ElementOptionSyntax : SyntaxNode
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the value of this option. The value can be an identifier (a string) or a literal (<see cref="LiteralSyntax"/>).
+    /// Gets or sets the value of this option. Might be null, or an identifier or an integer. 
     /// </summary>
     public object? Value { get; set; }
 
@@ -37,13 +39,13 @@ public sealed class ElementOptionSyntax : SyntaxNode
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -52,8 +54,6 @@ public sealed class ElementOptionSyntax : SyntaxNode
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(Name);
-        if (Value is null) return;
-
         builder.Append(" = ");
         if (Value is SyntaxNode node)
         {

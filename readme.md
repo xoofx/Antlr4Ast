@@ -12,6 +12,7 @@ Antlr4Ast is a .NET library that provides a parser and abstract syntax tree (AST
   - Should support almost all grammar features of ANTLR4/g4 except actions.
 - Provides **precise source location** for most of the AST elements.
 - Provides **access to comments** attached to syntax nodes.
+- Provides **visitor** and **transform**.
 - Library with nullable annotations.
 - Compatible with `.NET6+`
 
@@ -22,7 +23,7 @@ Antlr4Ast is a .NET library that provides a parser and abstract syntax tree (AST
 
 ## Usage
 
-The entry point for parsing an ANTLR4/g4 grammar is to use the `Antlr4Parser.Parse` methods:
+The entry point for parsing an ANTLR4/g4 grammar is to use the `Grammar.Parse` methods:
 
 ```c#
 var input = @"grammar MyGrammar;
@@ -35,7 +36,7 @@ TOKEN_A: 'a';
 TOKEN_B: 'b';
 ";
 // Parse the grammar
-var grammar = Antlr4Parser.Parse(input);
+var grammar = Grammar.Parse(input);
 // Print the grammar
 Console.WriteLine(
     grammar.ToString(

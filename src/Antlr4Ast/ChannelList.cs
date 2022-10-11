@@ -7,54 +7,52 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// This class defines the import statement.
+/// A class containing the channel ids.
 /// </summary>
-public sealed class ImportSyntax : SyntaxNode
+public sealed class ChannelList : SyntaxNode
 {
     /// <summary>
-    /// Creates a new instance of this object.
+    /// Creates an instance of this object.
     /// </summary>
-    public ImportSyntax()
+    public ChannelList()
     {
-        Names = new List<ImportNameSyntax>();
+        Ids = new List<string>();
     }
 
     /// <summary>
-    /// Gets the list of names.
+    /// Gets the channel ids.
     /// </summary>
-    public List<ImportNameSyntax> Names { get; }
+    public List<string> Ids { get; }
     
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        foreach (var importName in Names)
-        {
-            yield return importName;
-        }
+        yield break;
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
-
+    
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append("import ");
-        for (var i = 0; i < Names.Count; i++)
+        builder.Append("channels { ");
+        for (var i = 0; i < Ids.Count; i++)
         {
-            var importName = Names[i];
+            var id = Ids[i];
             if (i > 0) builder.Append(", ");
-            importName.ToText(builder, options);
+            builder.Append(id);
         }
-        builder.Append(';');
+
+        builder.Append(" }");
     }
 }

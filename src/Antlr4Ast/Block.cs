@@ -9,12 +9,12 @@ namespace Antlr4Ast;
 /// <summary>
 /// A block of alternatives ( options? altRule | altRule2 | ... | altRule# ).
 /// </summary>
-public sealed class BlockSyntax : AlternativeListSyntax
+public sealed class Block : AlternativeList
 {
     /// <summary>
     /// Gets or sets the options attached inside this block. This is optional.
     /// </summary>
-    public OptionsSyntax? Options { get; set; }
+    public OptionSpecList? Options { get; set; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -28,13 +28,13 @@ public sealed class BlockSyntax : AlternativeListSyntax
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }

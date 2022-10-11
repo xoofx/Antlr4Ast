@@ -7,30 +7,28 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// An option used in a an <see cref="OptionsSyntax"/>.
+/// A lexer command stored in a <see cref="LexerCommandList"/>.
 /// </summary>
-public sealed class OptionSyntax : SyntaxNode
+public sealed class LexerCommand : SyntaxNode
 {
     /// <summary>
     /// Creates a new instance of this object.
     /// </summary>
-    /// <param name="name">The name of the option.</param>
-    /// <param name="value">The value associated to this name. Might be null, or an identifier or an integer.</param>
-    public OptionSyntax(string name, object? value)
+    /// <param name="name">The name of the command.</param>
+    public LexerCommand(string name)
     {
         Name = name;
-        Value = value;
     }
 
     /// <summary>
-    /// Gets or sets the name of this option.
+    /// Gets or sets the name of this command.
     /// </summary>
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the value of this option. Might be null, or an identifier or an integer. 
+    /// Gets or sets the associated expression. Might be null, and in that case only the name if written otherwise the expression is put inside parenthesis.
     /// </summary>
-    public object? Value { get; set; }
+    public object? Expression { get; set; }
 
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
@@ -39,13 +37,13 @@ public sealed class OptionSyntax : SyntaxNode
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
@@ -54,14 +52,9 @@ public sealed class OptionSyntax : SyntaxNode
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
         builder.Append(Name);
-        builder.Append(" = ");
-        if (Value is SyntaxNode node)
+        if (Expression != null)
         {
-            node.ToText(builder, options);
-        }
-        else
-        {
-            builder.Append(Value);
+            builder.Append('(').Append(Expression).Append(')');
         }
     }
 }

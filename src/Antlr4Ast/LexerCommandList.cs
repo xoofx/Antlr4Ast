@@ -7,54 +7,53 @@ using System.Text;
 namespace Antlr4Ast;
 
 /// <summary>
-/// A list of <see cref="ElementOptionSyntax"/> attached to an <see cref="ElementSyntax"/>.
+/// Defines the lexer commands `-&gt;` attached to a lexer alternative <see cref="Alternative.LexerCommands"/> (e.g TOKEN: 'a' -&gt; channel(HIDDEN);).
 /// </summary>
-public sealed class ElementOptionsSyntax : SyntaxNode
+public sealed class LexerCommandList : SyntaxNode
 {
     /// <summary>
-    /// Creates an instance of this object.
+    /// Creates a new instance of this object.
     /// </summary>
-    public ElementOptionsSyntax()
+    public LexerCommandList()
     {
-        Items = new List<ElementOptionSyntax>();
+        Items = new List<LexerCommand>();
     }
 
     /// <summary>
-    /// Gets the list of <see cref="ElementOptionSyntax"/>.
+    /// Gets the commands.
     /// </summary>
-    public List<ElementOptionSyntax> Items { get; }
-
+    public List<LexerCommand> Items { get; }
+    
     /// <inheritdoc />
     public override IEnumerable<SyntaxNode> Children()
     {
-        foreach (var elementOptionSyntax in Items)
+        foreach (var lexerCommandSyntax in Items)
         {
-            yield return elementOptionSyntax;
+            yield return lexerCommandSyntax;
         }
     }
 
     /// <inheritdoc />
-    public override void Accept(Antlr4Visitor visitor)
+    public override void Accept(GrammarVisitor visitor)
     {
         visitor.Visit(this);
     }
 
     /// <inheritdoc />
-    public override TResult? Accept<TResult>(Antlr4Visitor<TResult> transform) where TResult : default
+    public override TResult? Accept<TResult>(GrammarVisitor<TResult> transform) where TResult : default
     {
         return transform.Visit(this);
     }
-
+    
     /// <inheritdoc />
     protected override void ToTextImpl(StringBuilder builder, AntlrFormattingOptions options)
     {
-        builder.Append(" <");
+        builder.Append(" -> ");
         for (var i = 0; i < Items.Count; i++)
         {
-            var elementOptionSyntax = Items[i];
+            var lexerCommand = Items[i];
             if (i > 0) builder.Append(", ");
-            elementOptionSyntax.ToText(builder, options);
+            lexerCommand.ToText(builder, options);
         }
-        builder.Append('>');
     }
 }

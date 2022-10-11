@@ -9,7 +9,7 @@ namespace Antlr4Ast;
 /// <summary>
 /// The base class for an element used in a lexer/parser rule.
 /// </summary>
-public abstract class ElementSyntax : SyntaxNode
+public abstract class SyntaxElement : SyntaxNode
 {
     /// <summary>
     /// Gets or sets if this element is negated by a ~ in the grammar.
@@ -34,7 +34,7 @@ public abstract class ElementSyntax : SyntaxNode
     /// <summary>
     /// Gets or sets the options attached to this element.
     /// </summary>
-    public ElementOptionsSyntax? ElementOptions { get; set; }
+    public ElementOptionList? ElementOptions { get; set; }
 
     /// <inheritdoc />
     protected override void ToTextImplBefore(StringBuilder builder, AntlrFormattingOptions options)
