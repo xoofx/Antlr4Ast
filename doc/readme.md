@@ -4,6 +4,7 @@ This is a small user guide about this library.
 
 - [Getting started](#getting-started)
 - [Class Diagram](#class-diagram)
+- [Using the Visitor](#using-the-visitor)
 - [Accessing rules](#accessing-rules)
 - [Accessing Comments](#accessing-comments)
 - [Merging Grammars](#merging-grammars)
