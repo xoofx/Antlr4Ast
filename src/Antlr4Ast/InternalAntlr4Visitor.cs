@@ -735,7 +735,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
     
     private static void ApplySuffix(ANTLRv4Parser.EbnfSuffixContext suffix, SyntaxElement node)
     {
-        var delta = suffix.QUESTION().Length == 2 ? 3 : 0;
+        var delta = suffix.children.Count == 2 ? 3 : 0;
         node.Suffix = (suffix.PLUS() != null ? SuffixKind.Plus : suffix.STAR() != null ? SuffixKind.Star : SuffixKind.Optional) + delta;
     }
 
