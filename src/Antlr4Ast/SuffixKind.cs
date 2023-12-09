@@ -30,17 +30,17 @@ public enum SuffixKind
     Optional,
 
     /// <summary>
-    /// The star `*?` suffix represents 0 or more elements with a greedy matching.
+    /// The star `*?` suffix represents 0 or more elements with a non-greedy matching.
     /// </summary>
-    StarGreedy,
+    StarNonGreedy,
 
     /// <summary>
-    /// The plus `+?` suffix represents 1 or more elements with a greedy matching.
+    /// The plus `+?` suffix represents 1 or more elements with a non-greedy matching.
     /// </summary>
-    PlusGreedy,
+    PlusNonGreedy,
 
     /// <summary>
-    /// The question `??` suffix represents 0 or 1 element with a greedy matching.
+    /// The question `??` suffix represents 0 or 1 element with a non-greedy matching.
     /// </summary>
-    OptionalGreedy,
+    OptionalNonGreedy,
 }

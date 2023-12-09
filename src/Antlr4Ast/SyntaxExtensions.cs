@@ -24,9 +24,9 @@ public static class SyntaxExtensions
             SuffixKind.Star => "*",
             SuffixKind.Plus => "+",
             SuffixKind.Optional => "?",
-            SuffixKind.StarGreedy => "*?",
-            SuffixKind.PlusGreedy => "+?",
-            SuffixKind.OptionalGreedy => "??",
+            SuffixKind.StarNonGreedy => "*?",
+            SuffixKind.PlusNonGreedy => "+?",
+            SuffixKind.OptionalNonGreedy => "??",
             _ => throw new ArgumentOutOfRangeException(nameof(suffix), suffix, null)
         };
 
