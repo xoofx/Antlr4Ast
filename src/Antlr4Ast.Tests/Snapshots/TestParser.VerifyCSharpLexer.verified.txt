@@ -20,7 +20,7 @@ EMPTY_DELIMITED_DOC_COMMENT
   ;
 
 DELIMITED_DOC_COMMENT
-  : '/**' ~ '/' .* '*/' -> channel(COMMENTS_CHANNEL)
+  : '/**' ~ '/' .*? '*/' -> channel(COMMENTS_CHANNEL)
   ;
 
 SINGLE_LINE_COMMENT
@@ -28,7 +28,7 @@ SINGLE_LINE_COMMENT
   ;
 
 DELIMITED_COMMENT
-  : '/*' .* '*/' -> channel(COMMENTS_CHANNEL)
+  : '/*' .*? '*/' -> channel(COMMENTS_CHANNEL)
   ;
 
 WHITESPACES
