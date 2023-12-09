@@ -1,4 +1,4 @@
-# Antlr4Ast [![Build Status](https://github.com/xoofx/Antlr4Ast/workflows/ci/badge.svg?branch=main)](https://github.com/xoofx/Antlr4Ast/actions) [![Coverage Status](https://coveralls.io/repos/github/xoofx/Antlr4Ast/badge.svg?branch=main)](https://coveralls.io/github/xoofx/Antlr4Ast?branch=main) [![NuGet](https://img.shields.io/nuget/v/Antlr4Ast.svg)](https://www.nuget.org/packages/Antlr4Ast/)
+# Antlr4Ast [![ci](https://github.com/xoofx/Antlr4Ast/actions/workflows/ci.yml/badge.svg)](https://github.com/xoofx/Antlr4Ast/actions/workflows/ci.yml) [![Coverage Status](https://coveralls.io/repos/github/xoofx/Antlr4Ast/badge.svg?branch=main)](https://coveralls.io/github/xoofx/Antlr4Ast?branch=main) [![NuGet](https://img.shields.io/nuget/v/Antlr4Ast.svg)](https://www.nuget.org/packages/Antlr4Ast/)
 
 <img align="right" width="160px" height="160px" src="img/antlr4ast.png">
 
@@ -14,7 +14,7 @@ Antlr4Ast is a .NET library that provides a parser and abstract syntax tree (AST
 - Provides **access to comments** attached to syntax nodes.
 - Provides **visitor** and **transform**.
 - Library with nullable annotations.
-- Compatible with `.NET6+`
+- Compatible with `netstandard2.0`
 
 > Limitations
 >
