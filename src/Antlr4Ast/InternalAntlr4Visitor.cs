@@ -454,7 +454,7 @@ internal sealed class InternalAntlr4Visitor : ANTLRv4ParserBaseVisitor<SyntaxNod
     private string GetStringLiteral(ITerminalNode node)
     {
         var text = node.GetText();
-        if (text.StartsWith('\'') && text.EndsWith('\''))
+        if (text.Length > 1 && text[0] == '\'' && text[^1] == '\'')
         {
             text = text.Substring(1, text.Length - 2);
         }
